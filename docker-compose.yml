@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+    db:
+        container_name: clinicwave-user-management-postgres
+        image: postgres:latest
+        restart: always
+        environment:
+            POSTGRES_DB: clinicwave-user-management
+            POSTGRES_USER: root
+            POSTGRES_PASSWORD: root
+        volumes:
+            - ./data:/var/lib/postgresql/data
+        ports:
+            - 5432:5432
