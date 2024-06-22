@@ -18,10 +18,24 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * This class is a global exception handler for the application.
+ * It extends the ResponseEntityExceptionHandler class provided by Spring, which provides centralized exception handling across all methods through @ExceptionHandler methods.
+ * It is annotated with @ControllerAdvice, which makes it applicable to all controllers in the application.
+ * <p>
+ * The class defines several methods, each annotated with @ExceptionHandler and handling a specific type of exception.
+ * When an exception to that type is thrown anywhere in the application, the corresponding method in this class will be invoked to handle it.
+ * Each method constructs an ErrorResponseDto object containing details about the exception and returns it in the response entity.
+ * <p>
+ * The handleMethodArgumentNotValid method is overridden from ResponseEntityExceptionHandler to provide custom handling for MethodArgumentNotValidException,
+ * which is thrown when validation on an argument annotated with @Valid fails.
+ *
  * @author aamir on 6/9/24
  */
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+  /**
+   * Handles all types of exceptions.
+   */
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponseDto> handleGlobalException(
           Exception exception,
@@ -37,6 +51,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return new ResponseEntity<>(errorResponseDto, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
+  /**
+   * Handles ResourceAlreadyExistsException.
+   */
   @ExceptionHandler(ResourceAlreadyExistsException.class)
   public ResponseEntity<ErrorResponseDto> handleResourceAlreadyExistsException(
           Exception exception,
@@ -52,6 +69,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return new ResponseEntity<>(errorResponseDto, HttpStatus.CONFLICT);
   }
 
+  /**
+   * Handles ResourceNotFoundException.
+   */
   @ExceptionHandler(ResourceNotFoundException.class)
   public ResponseEntity<ErrorResponseDto> handleResourceNotFoundException(
           Exception exception,
@@ -67,6 +87,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     return new ResponseEntity<>(errorResponseDto, HttpStatus.NOT_FOUND);
   }
 
+  /**
+   * Handles RoleMismatchException.
+   */
   @ExceptionHandler(RoleMismatchException.class)
   public ResponseEntity<ErrorResponseDto> handleRoleMismatchException(
           Exception exception,
