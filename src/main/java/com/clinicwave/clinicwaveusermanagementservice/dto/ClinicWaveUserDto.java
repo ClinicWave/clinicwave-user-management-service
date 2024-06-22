@@ -16,7 +16,6 @@ import java.time.LocalDate;
  * @author aamir on 6/16/24
  */
 public record ClinicWaveUserDto(
-        @NotNull(message = "User ID cannot be null")
         Long id,
 
         @NotBlank(message = "First name cannot be blank")
@@ -48,13 +47,10 @@ public record ClinicWaveUserDto(
 
         String bio,
 
-        @NotNull(message = "Status cannot be null")
         Boolean status,
 
-        @NotNull(message = "Role cannot be null")
         RoleDto role,
 
-        @NotNull(message = "User type cannot be null")
         UserTypeDto userType
 ) implements Serializable {
 }
