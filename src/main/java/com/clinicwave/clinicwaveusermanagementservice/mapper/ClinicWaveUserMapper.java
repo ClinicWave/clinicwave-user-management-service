@@ -5,6 +5,8 @@ import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * This class is responsible for mapping between the ClinicWaveUser domain object and the ClinicWaveUserDto data transfer object.
  * It uses the RoleMapper and UserTypeMapper to handle the mapping of nested objects.
@@ -49,10 +51,10 @@ public class ClinicWaveUserMapper {
             clinicWaveUser.getGender(),
             clinicWaveUser.getBio(),
             clinicWaveUser.getStatus(),
-            clinicWaveUser.getRole() != null ?
-                    roleMapper.toDto(clinicWaveUser.getRole()) : null,
-            clinicWaveUser.getUserType() != null ?
-                    userTypeMapper.toDto(clinicWaveUser.getUserType()) : null
+            Optional.ofNullable(clinicWaveUser.getRole())
+                    .map(roleMapper::toDto).orElse(null),
+            Optional.ofNullable(clinicWaveUser.getUserType())
+                    .map(userTypeMapper::toDto).orElse(null)
     );
   }
 
@@ -75,10 +77,10 @@ public class ClinicWaveUserMapper {
             clinicWaveUserDto.gender(),
             clinicWaveUserDto.bio(),
             clinicWaveUserDto.status(),
-            clinicWaveUserDto.role() != null ?
-                    roleMapper.toEntity(clinicWaveUserDto.role()) : null,
-            clinicWaveUserDto.userType() != null ?
-                    userTypeMapper.toEntity(clinicWaveUserDto.userType()) : null
+            Optional.ofNullable(clinicWaveUserDto.role())
+                    .map(roleMapper::toEntity).orElse(null),
+            Optional.ofNullable(clinicWaveUserDto.userType())
+                    .map(userTypeMapper::toEntity).orElse(null)
     );
   }
 }
