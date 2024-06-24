@@ -2,79 +2,81 @@ package com.clinicwave.clinicwaveusermanagementservice.mapper;
 
 import com.clinicwave.clinicwaveusermanagementservice.domain.Role;
 import com.clinicwave.clinicwaveusermanagementservice.domain.RolePermission;
+import com.clinicwave.clinicwaveusermanagementservice.dto.PermissionDto;
 import com.clinicwave.clinicwaveusermanagementservice.dto.RoleDto;
-import com.clinicwave.clinicwaveusermanagementservice.dto.RolePermissionDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * This class is responsible for mapping between the Role domain object and the RoleDto data transfer object.
- * It uses the RolePermissionMapper to handle the mapping of nested RolePermission objects.
+ * It uses the permissionMapper to handle the mapping of nested Permission objects.
  * The class is annotated with @Component to allow Spring to handle its lifecycle.
  *
  * @author aamir on 6/16/24
  */
 @Component
 public class RoleMapper {
-  private final RolePermissionMapper rolePermissionMapper;
+  private final PermissionMapper permissionMapper;
 
   /**
-   * Constructor for the RoleMapper class.
-   * It initializes the rolePermissionMapper with the provided mapper.
+   * Constructor for the PermissionMapper class.
+   * It initializes the permissionMapper with the provided mapper.
    *
-   * @param rolePermissionMapper the RolePermissionMapper to be used for mapping RolePermission objects
+   * @param permissionMapper the PermissionMapper to be used for mapping Permission objects
    */
   @Autowired
-  public RoleMapper(@Lazy RolePermissionMapper rolePermissionMapper) {
-    this.rolePermissionMapper = rolePermissionMapper;
+  public RoleMapper(PermissionMapper permissionMapper) {
+    this.permissionMapper = permissionMapper;
   }
 
   /**
    * Converts a Role domain object into a RoleDto data transfer object.
-   * It uses the RolePermissionMapper to convert the nested RolePermission objects.
+   * It uses the PermissionMapper to convert the nested Permission objects.
    *
    * @param role the Role object to be converted
    * @return the converted RoleDto object
    */
   public RoleDto toDto(Role role) {
-    Set<RolePermissionDto> rolePermissionDtoSet = role.getRolePermissionSet() != null ?
-            role.getRolePermissionSet().stream()
-                    .map(rolePermissionMapper::toDto)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toSet()) : null;
+    Set<PermissionDto> permissionDtoSet = role.getRolePermissionSet().stream()
+            .map(rolePermission -> permissionMapper.toDto(rolePermission.getPermission()))
+            .collect(Collectors.toSet());
 
     return new RoleDto(
             role.getId(),
             role.getRoleName(),
             role.getRoleDescription(),
-            rolePermissionDtoSet
+            permissionDtoSet
     );
   }
 
   /**
    * Converts a RoleDto data transfer object into a Role domain object.
-   * It uses the RolePermissionMapper to convert the nested RolePermissionDto objects.
+   * It uses the PermissionMapper to convert the nested Permission objects.
    *
    * @param roleDto the RoleDto object to be converted
    * @return the converted Role object
    */
   public Role toEntity(RoleDto roleDto) {
-    Set<RolePermission> rolePermissionSet = roleDto.rolePermissionSet() != null ?
-            roleDto.rolePermissionSet().stream()
-                    .map(rolePermissionMapper::toEntity)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toSet()) : null;
+    Role role = new Role();
+    role.setId(roleDto.id());
+    role.setRoleName(roleDto.roleName());
+    role.setRoleDescription(roleDto.roleDescription());
 
-    return new Role(
-            roleDto.id(),
-            roleDto.roleName(),
-            roleDto.roleDescription(),
-            rolePermissionSet
-    );
+    Set<RolePermission> rolePermissionSet = new HashSet<>();
+    if (roleDto.permissionSet() != null) {
+      for (PermissionDto permissionDto : roleDto.permissionSet()) {
+        RolePermission rolePermission = new RolePermission();
+        rolePermission.setRole(role);
+        rolePermission.setPermission(permissionMapper.toEntity(permissionDto));
+        rolePermissionSet.add(rolePermission);
+      }
+    }
+    role.setRolePermissionSet(rolePermissionSet);
+
+    return role;
   }
 }
