@@ -2,8 +2,8 @@ package com.clinicwave.clinicwaveusermanagementservice.dto;
 
 import com.clinicwave.clinicwaveusermanagementservice.domain.Role;
 import com.clinicwave.clinicwaveusermanagementservice.validator.UniqueField;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 import java.util.Set;
 
@@ -15,7 +15,6 @@ import java.util.Set;
  * @author aamir on 6/16/24
  */
 public record RoleDto(
-        @NotNull(message = "Role ID cannot be null")
         Long id,
 
         @NotBlank(message = "Role name cannot be blank")
@@ -24,6 +23,7 @@ public record RoleDto(
 
         String roleDescription,
 
-        Set<RolePermissionDto> rolePermissionSet
+        @Valid
+        Set<PermissionDto> permissionSet
 ) {
 }
