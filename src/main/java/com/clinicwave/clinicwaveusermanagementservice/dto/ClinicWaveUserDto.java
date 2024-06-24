@@ -3,6 +3,7 @@ package com.clinicwave.clinicwaveusermanagementservice.dto;
 import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
 import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;
 import com.clinicwave.clinicwaveusermanagementservice.validator.UniqueField;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 
 import java.io.Serializable;
@@ -49,6 +50,7 @@ public record ClinicWaveUserDto(
 
         Boolean status,
 
+        @Valid
         RoleDto role,
 
         UserTypeDto userType

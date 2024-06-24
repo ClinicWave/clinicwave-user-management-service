@@ -15,7 +15,6 @@ import java.io.Serializable;
  * @author aamir on 6/16/24
  */
 public record UserTypeDto(
-        @NotNull(message = "User type ID cannot be null")
         Long id,
 
         @NotBlank(message = "User type cannot be blank")
