@@ -1,6 +1,7 @@
 package com.clinicwave.clinicwaveusermanagementservice.exception;
 
 import com.clinicwave.clinicwaveusermanagementservice.dto.ErrorResponseDto;
+import com.clinicwave.clinicwaveusermanagementservice.dto.ValidationErrorResponseDto;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -109,18 +110,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
    * Handles MethodArgumentNotValidException.
    * This exception is thrown when validation on an argument annotated with @Valid fails.
    *
-   * @param exception the exception that was thrown
-   * @param headers   the headers for the response
-   * @param status    the status code for the response
-   * @param request   the current web request
-   * @return a response entity containing a map of field names to error messages
+   * @param exception  the exception that was thrown
+   * @param headers    the headers for the response
+   * @param status     the status code for the response
+   * @param webRequest the current web request
+   * @return a response entity containing a ValidationErrorResponseDto
    */
   @Override
   protected ResponseEntity<Object> handleMethodArgumentNotValid(
           MethodArgumentNotValidException exception,
           @NonNull HttpHeaders headers,
-          @NonNull HttpStatusCode status,
-          @NonNull WebRequest request
+          HttpStatusCode status,
+          WebRequest webRequest
   ) {
     Map<String, String> errors = exception.getBindingResult()
             .getFieldErrors()
@@ -132,6 +133,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                     (existing, replacement) -> existing
             ));
 
-    return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    ValidationErrorResponseDto validationErrorResponseDto = new ValidationErrorResponseDto(
+            webRequest.getDescription(false),
+            status.value(),
+            "Validation failed",
+            LocalDateTime.now(),
+            errors
+    );
+
+    return new ResponseEntity<>(validationErrorResponseDto, status);
   }
 }
