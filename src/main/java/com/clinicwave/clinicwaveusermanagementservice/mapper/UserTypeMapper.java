@@ -4,6 +4,8 @@ import com.clinicwave.clinicwaveusermanagementservice.domain.UserType;
 import com.clinicwave.clinicwaveusermanagementservice.dto.UserTypeDto;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * This class is responsible for mapping between the UserType domain object and the UserTypeDto data transfer object.
  * The class is annotated with @Component to allow Spring to handle its lifecycle.
@@ -19,10 +21,9 @@ public class UserTypeMapper {
    * @return the converted UserTypeDto object
    */
   public UserTypeDto toDto(UserType userType) {
-    return new UserTypeDto(
-            userType.getId(),
-            userType.getType()
-    );
+    return Optional.ofNullable(userType)
+            .map(u -> new UserTypeDto(u.getId(), u.getType()))
+            .orElse(null);
   }
 
   /**
@@ -32,9 +33,8 @@ public class UserTypeMapper {
    * @return the converted UserType object
    */
   public UserType toEntity(UserTypeDto userTypeDto) {
-    return new UserType(
-            userTypeDto.id(),
-            userTypeDto.type()
-    );
+    return Optional.ofNullable(userTypeDto)
+            .map(dto -> new UserType(dto.id(), dto.type()))
+            .orElse(null);
   }
 }

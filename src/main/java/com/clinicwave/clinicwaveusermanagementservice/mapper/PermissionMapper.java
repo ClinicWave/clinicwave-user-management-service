@@ -4,6 +4,8 @@ import com.clinicwave.clinicwaveusermanagementservice.domain.Permission;
 import com.clinicwave.clinicwaveusermanagementservice.dto.PermissionDto;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * This class is responsible for mapping between the Permission domain object and the PermissionDto data transfer object.
  * The class is annotated with @Component to allow Spring to handle its lifecycle.
@@ -19,10 +21,9 @@ public class PermissionMapper {
    * @return the converted PermissionDto object
    */
   public PermissionDto toDto(Permission permission) {
-    return new PermissionDto(
-            permission.getId(),
-            permission.getPermissionName()
-    );
+    return Optional.ofNullable(permission)
+            .map(p -> new PermissionDto(p.getId(), p.getPermissionName()))
+            .orElse(null);
   }
 
   /**
@@ -32,9 +33,8 @@ public class PermissionMapper {
    * @return the converted Permission object
    */
   public Permission toEntity(PermissionDto permissionDto) {
-    return new Permission(
-            permissionDto.id(),
-            permissionDto.permissionName()
-    );
+    return Optional.ofNullable(permissionDto)
+            .map(dto -> new Permission(dto.id(), dto.permissionName()))
+            .orElse(null);
   }
 }
