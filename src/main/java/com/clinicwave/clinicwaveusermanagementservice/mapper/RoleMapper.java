@@ -7,7 +7,7 @@ import com.clinicwave.clinicwaveusermanagementservice.dto.RoleDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -41,7 +41,9 @@ public class RoleMapper {
    * @return the converted RoleDto object
    */
   public RoleDto toDto(Role role) {
-    Set<PermissionDto> permissionDtoSet = role.getRolePermissionSet().stream()
+    Set<PermissionDto> permissionDtoSet = Optional.ofNullable(role.getRolePermissionSet())
+            .orElse(Set.of())
+            .stream()
             .map(rolePermission -> permissionMapper.toDto(rolePermission.getPermission()))
             .collect(Collectors.toSet());
 
@@ -66,16 +68,17 @@ public class RoleMapper {
     role.setRoleName(roleDto.roleName());
     role.setRoleDescription(roleDto.roleDescription());
 
-    Set<RolePermission> rolePermissionSet = new HashSet<>();
-    if (roleDto.permissionSet() != null) {
-      for (PermissionDto permissionDto : roleDto.permissionSet()) {
-        RolePermission rolePermission = new RolePermission();
-        rolePermission.setRole(role);
-        rolePermission.setPermission(permissionMapper.toEntity(permissionDto));
-        rolePermissionSet.add(rolePermission);
-      }
-    }
-    role.setRolePermissionSet(rolePermissionSet);
+    Optional.ofNullable(roleDto.permissionSet()).ifPresent(permissionDtoSet -> {
+      Set<RolePermission> rolePermissions = permissionDtoSet.stream()
+              .map(permissionDto -> {
+                RolePermission rolePermission = new RolePermission();
+                rolePermission.setRole(role);
+                rolePermission.setPermission(permissionMapper.toEntity(permissionDto));
+                return rolePermission;
+              })
+              .collect(Collectors.toSet());
+      role.setRolePermissionSet(rolePermissions);
+    });
 
     return role;
   }
