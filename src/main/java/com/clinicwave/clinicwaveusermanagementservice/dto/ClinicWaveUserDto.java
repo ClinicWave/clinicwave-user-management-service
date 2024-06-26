@@ -53,6 +53,7 @@ public record ClinicWaveUserDto(
         @Valid
         RoleDto role,
 
+        @Valid
         UserTypeDto userType
 ) implements Serializable {
 }

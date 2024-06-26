@@ -3,7 +3,6 @@ package com.clinicwave.clinicwaveusermanagementservice.dto;
 import com.clinicwave.clinicwaveusermanagementservice.domain.UserType;
 import com.clinicwave.clinicwaveusermanagementservice.validator.UniqueField;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 import java.io.Serializable;
 
