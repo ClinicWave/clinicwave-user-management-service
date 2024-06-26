@@ -58,9 +58,9 @@ public class ClinicWaveUser extends Audit implements Serializable {
 
   private Boolean status;
 
-  @OneToOne
+  @OneToOne(cascade = CascadeType.ALL)
   private Role role;
 
-  @OneToOne
+  @OneToOne(cascade = CascadeType.ALL)
   private UserType userType;
 }

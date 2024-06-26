@@ -95,17 +95,17 @@ class RoleTest {
   @Test
   @DisplayName("Role should be saved and retrieved from repository with role permissions")
   void roleShouldBeSavedAndRetrievedFromRepositoryWithRolePermissions() {
-    permissionRepository.save(permission);
+    Role savedRole = roleRepository.save(role);
 
     RolePermission rolePermission = new RolePermission();
-    rolePermission.setRole(role);
+    rolePermission.setRole(savedRole);
     rolePermission.setPermission(permission);
 
     Set<RolePermission> rolePermissions = new HashSet<>();
     rolePermissions.add(rolePermission);
-    role.setRolePermissionSet(rolePermissions);
+    savedRole.setRolePermissionSet(rolePermissions);
 
-    Role savedRole = roleRepository.save(role);
+    roleRepository.save(savedRole);
 
     Optional<Role> retrievedRole = roleRepository.findById(savedRole.getId());
     assertTrue(retrievedRole.isPresent());

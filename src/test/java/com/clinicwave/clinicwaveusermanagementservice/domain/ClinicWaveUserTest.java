@@ -2,8 +2,6 @@ package com.clinicwave.clinicwaveusermanagementservice.domain;
 
 import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;
 import com.clinicwave.clinicwaveusermanagementservice.repository.ClinicWaveUserRepository;
-import com.clinicwave.clinicwaveusermanagementservice.repository.RoleRepository;
-import com.clinicwave.clinicwaveusermanagementservice.repository.UserTypeRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,22 +26,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class ClinicWaveUserTest {
   private final ClinicWaveUserRepository userRepository;
-  private final RoleRepository roleRepository;
-  private final UserTypeRepository userTypeRepository;
   private ClinicWaveUser user;
 
   /**
    * Constructor for dependency injection.
    *
-   * @param userRepository     The repository for ClinicWaveUser entities.
-   * @param roleRepository     The repository for Role entities.
-   * @param userTypeRepository The repository for UserType entities.
+   * @param userRepository The repository for ClinicWaveUser entities.
    */
   @Autowired
-  public ClinicWaveUserTest(ClinicWaveUserRepository userRepository, RoleRepository roleRepository, UserTypeRepository userTypeRepository) {
+  public ClinicWaveUserTest(ClinicWaveUserRepository userRepository) {
     this.userRepository = userRepository;
-    this.roleRepository = roleRepository;
-    this.userTypeRepository = userTypeRepository;
   }
 
   /**
@@ -107,14 +99,12 @@ class ClinicWaveUserTest {
   void userRoleAndUserTypeShouldBeSavedAndRetrievedCorrectly() {
     Role role = new Role();
     role.setRoleName("TEST_ROLE");
-    Role savedRole = roleRepository.save(role);
 
     UserType userType = new UserType();
     userType.setType("TEST_TYPE");
-    UserType savedUserType = userTypeRepository.save(userType);
 
-    user.setRole(savedRole);
-    user.setUserType(savedUserType);
+    user.setRole(role);
+    user.setUserType(userType);
 
     userRepository.save(user);
     Optional<ClinicWaveUser> retrievedUser = userRepository.findById(user.getId());
