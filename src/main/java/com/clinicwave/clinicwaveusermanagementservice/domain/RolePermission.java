@@ -43,6 +43,6 @@ public class RolePermission extends Audit implements Serializable {
    * This field represents the associated Permission object.
    * It is annotated with @ManyToOne to establish a many-to-one relationship with the Permission entity.
    */
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.ALL)
   private Permission permission;
 }
