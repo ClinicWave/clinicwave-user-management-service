@@ -2,6 +2,9 @@ package com.clinicwave.clinicwaveusermanagementservice.domain;
 
 import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;
 import com.clinicwave.clinicwaveusermanagementservice.repository.ClinicWaveUserRepository;
+import com.clinicwave.clinicwaveusermanagementservice.repository.PermissionRepository;
+import com.clinicwave.clinicwaveusermanagementservice.repository.RoleRepository;
+import com.clinicwave.clinicwaveusermanagementservice.repository.UserTypeRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +14,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,21 +31,35 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class ClinicWaveUserTest {
   private final ClinicWaveUserRepository userRepository;
+  private final RoleRepository roleRepository;
+  private final PermissionRepository permissionRepository;
+  private final UserTypeRepository userTypeRepository;
+
   private ClinicWaveUser user;
+  private Role role;
+  private Permission permission;
+  private RolePermission rolePermission;
+  private UserType userType;
 
   /**
    * Constructor for dependency injection.
    *
-   * @param userRepository The repository for ClinicWaveUser entities.
+   * @param userRepository       The repository for ClinicWaveUser entities.
+   * @param roleRepository       The repository for Role entities.
+   * @param permissionRepository The repository for Permission entities.
+   * @param userTypeRepository   The repository for UserType entities.
    */
   @Autowired
-  public ClinicWaveUserTest(ClinicWaveUserRepository userRepository) {
+  public ClinicWaveUserTest(ClinicWaveUserRepository userRepository, RoleRepository roleRepository, PermissionRepository permissionRepository, UserTypeRepository userTypeRepository) {
     this.userRepository = userRepository;
+    this.roleRepository = roleRepository;
+    this.permissionRepository = permissionRepository;
+    this.userTypeRepository = userTypeRepository;
   }
 
   /**
    * Set up method that runs before each test.
-   * It initializes a new ClinicWaveUser entity.
+   * It initializes a ClinicWaveUser, Role, Permission, RolePermission, and UserType entity.
    */
   @BeforeEach
   void setUp() {
@@ -52,15 +71,31 @@ class ClinicWaveUserTest {
     user.setEmail("testuser@example.com");
     user.setDateOfBirth(LocalDate.of(1990, 1, 1));
     user.setGender(GenderEnum.MALE);
+
+    role = new Role();
+    role.setRoleName("TEST_ROLE");
+
+    permission = new Permission();
+    permission.setPermissionName("TEST_PERMISSION");
+
+    rolePermission = new RolePermission();
+    rolePermission.setRole(role);
+    rolePermission.setPermission(permission);
+
+    userType = new UserType();
+    userType.setType("TEST_TYPE");
   }
 
   /**
    * Tear down method that runs after each test.
-   * It deletes all ClinicWaveUser entities from the repository.
+   * It deletes all ClinicWaveUser, Role, Permission, and UserType entities from the repository.
    */
   @AfterEach
   void tearDown() {
     userRepository.deleteAll();
+    roleRepository.deleteAll();
+    permissionRepository.deleteAll();
+    userTypeRepository.deleteAll();
   }
 
   @Test
@@ -95,23 +130,34 @@ class ClinicWaveUserTest {
   }
 
   @Test
-  @DisplayName("User role and userType should be saved and retrieved correctly")
-  void userRoleAndUserTypeShouldBeSavedAndRetrievedCorrectly() {
-    Role role = new Role();
-    role.setRoleName("TEST_ROLE");
+  @DisplayName("User role, user type, and permissions should be saved and retrieved correctly")
+  void userRoleUserTypeAndPermissionShouldBeSavedAndRetrievedCorrectly() {
+    permissionRepository.save(permission);
 
-    UserType userType = new UserType();
-    userType.setType("TEST_TYPE");
+    Set<RolePermission> rolePermissionSet = new HashSet<>();
+    rolePermissionSet.add(rolePermission);
+
+    role.setRolePermissionSet(rolePermissionSet);
+    roleRepository.save(role);
+
+    userTypeRepository.save(userType);
 
     user.setRole(role);
     user.setUserType(userType);
 
     userRepository.save(user);
+
     Optional<ClinicWaveUser> retrievedUser = userRepository.findById(user.getId());
     assertTrue(retrievedUser.isPresent());
     assertEquals(user.getId(), retrievedUser.get().getId());
+    assertEquals(user.getRole().getId(), retrievedUser.get().getRole().getId());
     assertEquals(user.getRole().getRoleName(), retrievedUser.get().getRole().getRoleName());
+    assertEquals(user.getRole().getRoleDescription(), retrievedUser.get().getRole().getRoleDescription());
+    assertEquals(user.getUserType().getId(), retrievedUser.get().getUserType().getId());
     assertEquals(user.getUserType().getType(), retrievedUser.get().getUserType().getType());
+    assertEquals(user.getRole().getRolePermissionSet().size(), retrievedUser.get().getRole().getRolePermissionSet().size());
+    assertEquals(user.getRole().getRolePermissionSet().iterator().next().getRole().getId(), retrievedUser.get().getRole().getRolePermissionSet().iterator().next().getRole().getId());
+    assertEquals(user.getRole().getRolePermissionSet().iterator().next().getPermission().getId(), retrievedUser.get().getRole().getRolePermissionSet().iterator().next().getPermission().getId());
   }
 
   @Test
