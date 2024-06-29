@@ -47,14 +47,6 @@ public record ClinicWaveUserDto(
         @NotNull(message = "Gender cannot be null")
         GenderEnum gender,
 
-        String bio,
-
-        UserStatusEnum status,
-
-        @Valid
-        RoleDto role,
-
-        @Valid
-        UserTypeDto userType
+        String bio
 ) implements Serializable {
 }
