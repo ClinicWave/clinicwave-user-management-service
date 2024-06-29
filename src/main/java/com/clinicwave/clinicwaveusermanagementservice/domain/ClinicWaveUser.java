@@ -2,6 +2,7 @@ package com.clinicwave.clinicwaveusermanagementservice.domain;
 
 import com.clinicwave.clinicwaveusermanagementservice.audit.Audit;
 import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;
+import com.clinicwave.clinicwaveusermanagementservice.enums.UserStatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -56,7 +57,9 @@ public class ClinicWaveUser extends Audit implements Serializable {
 
   private String bio;
 
-  private Boolean status;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private UserStatusEnum status;
 
   @ManyToOne
   private Role role;
