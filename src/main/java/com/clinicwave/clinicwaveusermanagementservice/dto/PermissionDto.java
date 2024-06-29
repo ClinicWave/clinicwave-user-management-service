@@ -1,7 +1,5 @@
 package com.clinicwave.clinicwaveusermanagementservice.dto;
 
-import com.clinicwave.clinicwaveusermanagementservice.domain.Permission;
-import com.clinicwave.clinicwaveusermanagementservice.validator.UniqueField;
 import jakarta.validation.constraints.NotBlank;
 
 /**
@@ -15,7 +13,6 @@ public record PermissionDto(
         Long id,
 
         @NotBlank(message = "Permission name cannot be blank")
-        @UniqueField(fieldName = "permissionName", domainClass = Permission.class)
         String permissionName
 ) {
 }
