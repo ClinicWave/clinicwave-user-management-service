@@ -52,6 +52,7 @@ class RoleTest {
   void setUp() {
     role = new Role();
     role.setRoleName("TEST_ROLE");
+    role.setRoleDescription("TEST_ROLE_DESCRIPTION");
 
     permission = new Permission();
     permission.setPermissionName("TEST_PERMISSION");
@@ -90,29 +91,30 @@ class RoleTest {
     assertTrue(retrievedRole.isPresent());
     assertEquals(role.getId(), retrievedRole.get().getId());
     assertEquals(role.getRoleName(), retrievedRole.get().getRoleName());
+    assertEquals(role.getRoleDescription(), retrievedRole.get().getRoleDescription());
   }
 
   @Test
   @DisplayName("Role should be saved and retrieved from repository with role permissions")
   void roleShouldBeSavedAndRetrievedFromRepositoryWithRolePermissions() {
-    Role savedRole = roleRepository.save(role);
+    permissionRepository.save(permission);
 
     RolePermission rolePermission = new RolePermission();
-    rolePermission.setRole(savedRole);
+    rolePermission.setRole(role);
     rolePermission.setPermission(permission);
 
     Set<RolePermission> rolePermissions = new HashSet<>();
     rolePermissions.add(rolePermission);
-    savedRole.setRolePermissionSet(rolePermissions);
+    role.setRolePermissionSet(rolePermissions);
 
-    roleRepository.save(savedRole);
+    roleRepository.save(role);
 
-    Optional<Role> retrievedRole = roleRepository.findById(savedRole.getId());
+    Optional<Role> retrievedRole = roleRepository.findById(role.getId());
     assertTrue(retrievedRole.isPresent());
     Role retrievedRoleValue = retrievedRole.get();
 
-    assertEquals(savedRole.getId(), retrievedRoleValue.getId());
-    assertEquals(savedRole.getRoleName(), retrievedRoleValue.getRoleName());
+    assertEquals(role.getId(), retrievedRoleValue.getId());
+    assertEquals(role.getRoleName(), retrievedRoleValue.getRoleName());
 
     assertNotNull(retrievedRoleValue.getRolePermissionSet());
     assertEquals(1, retrievedRoleValue.getRolePermissionSet().size());
