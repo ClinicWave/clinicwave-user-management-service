@@ -1,7 +1,5 @@
 package com.clinicwave.clinicwaveusermanagementservice.dto;
 
-import com.clinicwave.clinicwaveusermanagementservice.domain.Role;
-import com.clinicwave.clinicwaveusermanagementservice.validator.UniqueField;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 
@@ -18,7 +16,6 @@ public record RoleDto(
         Long id,
 
         @NotBlank(message = "Role name cannot be blank")
-        @UniqueField(fieldName = "roleName", domainClass = Role.class)
         String roleName,
 
         String roleDescription,

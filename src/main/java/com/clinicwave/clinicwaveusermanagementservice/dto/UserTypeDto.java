@@ -1,7 +1,5 @@
 package com.clinicwave.clinicwaveusermanagementservice.dto;
 
-import com.clinicwave.clinicwaveusermanagementservice.domain.UserType;
-import com.clinicwave.clinicwaveusermanagementservice.validator.UniqueField;
 import jakarta.validation.constraints.NotBlank;
 
 import java.io.Serializable;
@@ -17,7 +15,6 @@ public record UserTypeDto(
         Long id,
 
         @NotBlank(message = "User type cannot be blank")
-        @UniqueField(fieldName = "type", domainClass = UserType.class)
         String type
 ) implements Serializable {
 }
