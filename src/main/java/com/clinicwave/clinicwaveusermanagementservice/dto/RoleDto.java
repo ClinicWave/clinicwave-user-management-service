@@ -1,5 +1,6 @@
 package com.clinicwave.clinicwaveusermanagementservice.dto;
 
+import com.clinicwave.clinicwaveusermanagementservice.enums.RoleNameEnum;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 
@@ -16,7 +17,7 @@ public record RoleDto(
         Long id,
 
         @NotBlank(message = "Role name cannot be blank")
-        String roleName,
+        RoleNameEnum roleName,
 
         String roleDescription,
 

@@ -1,5 +1,6 @@
 package com.clinicwave.clinicwaveusermanagementservice.domain;
 
+import com.clinicwave.clinicwaveusermanagementservice.enums.UserTypeEnum;
 import com.clinicwave.clinicwaveusermanagementservice.repository.UserTypeRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +44,7 @@ class UserTypeTest {
   @BeforeEach
   void setUp() {
     userType = new UserType();
-    userType.setType("TEST_TYPE");
+    userType.setType(UserTypeEnum.USER_TYPE_DEFAULT);
   }
 
   /**
@@ -94,7 +95,7 @@ class UserTypeTest {
   void duplicateUserTypeShouldThrowException() {
     userTypeRepository.save(userType);
     UserType duplicateUserType = new UserType();
-    duplicateUserType.setType("TEST_TYPE");
+    duplicateUserType.setType(UserTypeEnum.USER_TYPE_DEFAULT);
     assertThrows(Exception.class, () -> userTypeRepository.save(duplicateUserType));
   }
 }

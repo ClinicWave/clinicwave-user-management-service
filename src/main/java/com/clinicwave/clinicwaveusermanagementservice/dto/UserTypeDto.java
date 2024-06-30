@@ -1,5 +1,6 @@
 package com.clinicwave.clinicwaveusermanagementservice.dto;
 
+import com.clinicwave.clinicwaveusermanagementservice.enums.UserTypeEnum;
 import jakarta.validation.constraints.NotBlank;
 
 import java.io.Serializable;
@@ -15,6 +16,6 @@ public record UserTypeDto(
         Long id,
 
         @NotBlank(message = "User type cannot be blank")
-        String type
+        UserTypeEnum type
 ) implements Serializable {
 }

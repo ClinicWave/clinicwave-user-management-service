@@ -1,5 +1,6 @@
 package com.clinicwave.clinicwaveusermanagementservice.domain;
 
+import com.clinicwave.clinicwaveusermanagementservice.enums.PermissionNameEnum;
 import com.clinicwave.clinicwaveusermanagementservice.repository.PermissionRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +44,7 @@ class PermissionTest {
   @BeforeEach
   void setUp() {
     permission = new Permission();
-    permission.setPermissionName("TEST_PERMISSION");
+    permission.setPermissionName(PermissionNameEnum.PERMISSION_READ);
   }
 
   /**
@@ -83,10 +84,10 @@ class PermissionTest {
   @DisplayName("Permission should be updated")
   void permissionShouldBeUpdated() {
     Permission savedPermission = permissionRepository.save(permission);
-    savedPermission.setPermissionName("UPDATED_PERMISSION");
+    savedPermission.setPermissionName(PermissionNameEnum.PERMISSION_WRITE);
     Permission updatedPermission = permissionRepository.save(savedPermission);
     assertNotNull(updatedPermission);
-    assertEquals("UPDATED_PERMISSION", updatedPermission.getPermissionName());
+    assertEquals(PermissionNameEnum.PERMISSION_WRITE, updatedPermission.getPermissionName());
   }
 
   @Test
@@ -103,7 +104,7 @@ class PermissionTest {
   void duplicatePermissionShouldThrowException() {
     permissionRepository.save(permission);
     Permission duplicatePermission = new Permission();
-    duplicatePermission.setPermissionName("TEST_PERMISSION");
+    duplicatePermission.setPermissionName(PermissionNameEnum.PERMISSION_READ);
     assertThrows(Exception.class, () -> permissionRepository.save(duplicatePermission));
   }
 }

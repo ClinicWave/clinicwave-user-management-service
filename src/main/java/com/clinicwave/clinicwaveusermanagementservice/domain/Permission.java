@@ -1,6 +1,7 @@
 package com.clinicwave.clinicwaveusermanagementservice.domain;
 
 import com.clinicwave.clinicwaveusermanagementservice.audit.Audit;
+import com.clinicwave.clinicwaveusermanagementservice.enums.PermissionNameEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,6 +31,7 @@ public class Permission extends Audit implements Serializable {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false, unique = true)
-  private String permissionName;
+  private PermissionNameEnum permissionName;
 }
