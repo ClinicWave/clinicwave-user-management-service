@@ -26,16 +26,28 @@ public record ClinicWaveUserDto(
 
         @NotBlank(message = "Mobile number cannot be blank")
         @Pattern(regexp = "^\\d{10}$", message = "Invalid mobile number format")
-        @UniqueField(fieldName = "mobileNumber", domainClass = ClinicWaveUser.class)
+        @UniqueField(
+                message = "Mobile number is already registered. Please use a different number",
+                fieldName = "mobileNumber",
+                domainClass = ClinicWaveUser.class
+        )
         String mobileNumber,
 
         @NotBlank(message = "Username cannot be blank")
-        @UniqueField(fieldName = "username", domainClass = ClinicWaveUser.class)
+        @UniqueField(
+                message = "username is already taken. Please choose a different username",
+                fieldName = "username",
+                domainClass = ClinicWaveUser.class
+        )
         String username,
 
         @NotBlank(message = "Email cannot be blank")
         @Email(message = "Invalid email format")
-        @UniqueField(fieldName = "email", domainClass = ClinicWaveUser.class)
+        @UniqueField(
+                message = "Account with this email address already exists. Please use a different email",
+                fieldName = "email",
+                domainClass = ClinicWaveUser.class
+        )
         String email,
 
         @NotNull(message = "Date of birth cannot be null")
