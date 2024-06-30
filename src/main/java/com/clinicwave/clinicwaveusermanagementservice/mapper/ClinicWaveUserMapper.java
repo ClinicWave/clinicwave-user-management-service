@@ -4,6 +4,8 @@ import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
 import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserDto;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 /**
  * This class is responsible for mapping between the ClinicWaveUser domain object and the ClinicWaveUserDto data transfer object.
  * The class is annotated with @Component to allow Spring to handle its lifecycle.
@@ -19,19 +21,19 @@ public class ClinicWaveUserMapper {
    * @return the converted ClinicWaveUserDto object
    */
   public ClinicWaveUserDto toDto(ClinicWaveUser clinicWaveUser) {
-    if (clinicWaveUser == null) return null;
-
-    return new ClinicWaveUserDto(
-            clinicWaveUser.getId(),
-            clinicWaveUser.getFirstName(),
-            clinicWaveUser.getLastName(),
-            clinicWaveUser.getMobileNumber(),
-            clinicWaveUser.getUsername(),
-            clinicWaveUser.getEmail(),
-            clinicWaveUser.getDateOfBirth(),
-            clinicWaveUser.getGender(),
-            clinicWaveUser.getBio()
-    );
+    return Optional.ofNullable(clinicWaveUser)
+            .map(c -> new ClinicWaveUserDto(
+                    c.getId(),
+                    c.getFirstName(),
+                    c.getLastName(),
+                    c.getMobileNumber(),
+                    c.getUsername(),
+                    c.getEmail(),
+                    c.getDateOfBirth(),
+                    c.getGender(),
+                    c.getBio()
+            ))
+            .orElse(null);
   }
 
   /**
@@ -41,18 +43,20 @@ public class ClinicWaveUserMapper {
    * @return the converted ClinicWaveUser object
    */
   public ClinicWaveUser toEntity(ClinicWaveUserDto clinicWaveUserDto) {
-    if (clinicWaveUserDto == null) return null;
-
-    ClinicWaveUser clinicWaveUser = new ClinicWaveUser();
-    clinicWaveUser.setId(clinicWaveUserDto.id());
-    clinicWaveUser.setFirstName(clinicWaveUserDto.firstName());
-    clinicWaveUser.setLastName(clinicWaveUserDto.lastName());
-    clinicWaveUser.setMobileNumber(clinicWaveUserDto.mobileNumber());
-    clinicWaveUser.setUsername(clinicWaveUserDto.username());
-    clinicWaveUser.setEmail(clinicWaveUserDto.email());
-    clinicWaveUser.setDateOfBirth(clinicWaveUserDto.dateOfBirth());
-    clinicWaveUser.setGender(clinicWaveUserDto.gender());
-    clinicWaveUser.setBio(clinicWaveUserDto.bio());
-    return clinicWaveUser;
+    return Optional.ofNullable(clinicWaveUserDto)
+            .map(dto -> {
+              ClinicWaveUser clinicWaveUser = new ClinicWaveUser();
+              clinicWaveUser.setId(dto.id());
+              clinicWaveUser.setFirstName(dto.firstName());
+              clinicWaveUser.setLastName(dto.lastName());
+              clinicWaveUser.setMobileNumber(dto.mobileNumber());
+              clinicWaveUser.setUsername(dto.username());
+              clinicWaveUser.setEmail(dto.email());
+              clinicWaveUser.setDateOfBirth(dto.dateOfBirth());
+              clinicWaveUser.setGender(dto.gender());
+              clinicWaveUser.setBio(dto.bio());
+              return clinicWaveUser;
+            })
+            .orElse(null);
   }
 }
