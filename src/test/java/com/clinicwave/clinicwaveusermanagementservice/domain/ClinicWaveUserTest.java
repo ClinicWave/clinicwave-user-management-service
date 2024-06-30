@@ -1,6 +1,6 @@
 package com.clinicwave.clinicwaveusermanagementservice.domain;
 
-import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;
+import com.clinicwave.clinicwaveusermanagementservice.enums.*;
 import com.clinicwave.clinicwaveusermanagementservice.repository.ClinicWaveUserRepository;
 import com.clinicwave.clinicwaveusermanagementservice.repository.PermissionRepository;
 import com.clinicwave.clinicwaveusermanagementservice.repository.RoleRepository;
@@ -71,19 +71,20 @@ class ClinicWaveUserTest {
     user.setEmail("testuser@example.com");
     user.setDateOfBirth(LocalDate.of(1990, 1, 1));
     user.setGender(GenderEnum.MALE);
+    user.setStatus(UserStatusEnum.PENDING);
 
     role = new Role();
-    role.setRoleName("TEST_ROLE");
+    role.setRoleName(RoleNameEnum.ROLE_DEFAULT);
 
     permission = new Permission();
-    permission.setPermissionName("TEST_PERMISSION");
+    permission.setPermissionName(PermissionNameEnum.PERMISSION_READ);
 
     rolePermission = new RolePermission();
     rolePermission.setRole(role);
     rolePermission.setPermission(permission);
 
     userType = new UserType();
-    userType.setType("TEST_TYPE");
+    userType.setType(UserTypeEnum.USER_TYPE_DEFAULT);
   }
 
   /**
@@ -127,6 +128,7 @@ class ClinicWaveUserTest {
     assertEquals(user.getEmail(), retrievedUser.get().getEmail());
     assertEquals(user.getDateOfBirth(), retrievedUser.get().getDateOfBirth());
     assertEquals(user.getGender(), retrievedUser.get().getGender());
+    assertEquals(user.getStatus(), retrievedUser.get().getStatus());
   }
 
   @Test

@@ -1,5 +1,6 @@
 package com.clinicwave.clinicwaveusermanagementservice.dto;
 
+import com.clinicwave.clinicwaveusermanagementservice.enums.PermissionNameEnum;
 import jakarta.validation.constraints.NotBlank;
 
 /**
@@ -13,6 +14,6 @@ public record PermissionDto(
         Long id,
 
         @NotBlank(message = "Permission name cannot be blank")
-        String permissionName
+        PermissionNameEnum permissionName
 ) {
 }

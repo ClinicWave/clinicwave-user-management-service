@@ -1,6 +1,7 @@
 package com.clinicwave.clinicwaveusermanagementservice.domain;
 
 import com.clinicwave.clinicwaveusermanagementservice.audit.Audit;
+import com.clinicwave.clinicwaveusermanagementservice.enums.RoleNameEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,8 +32,10 @@ public class Role extends Audit implements Serializable {
   @GeneratedValue(strategy = GenerationType.AUTO)
   private Long id;
 
+  @Enumerated(EnumType.STRING)
   @Column(nullable = false, unique = true)
-  private String roleName;
+  private RoleNameEnum roleName;
+
   private String roleDescription;
 
   /**

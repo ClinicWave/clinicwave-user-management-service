@@ -1,5 +1,7 @@
 package com.clinicwave.clinicwaveusermanagementservice.domain;
 
+import com.clinicwave.clinicwaveusermanagementservice.enums.PermissionNameEnum;
+import com.clinicwave.clinicwaveusermanagementservice.enums.RoleNameEnum;
 import com.clinicwave.clinicwaveusermanagementservice.repository.PermissionRepository;
 import com.clinicwave.clinicwaveusermanagementservice.repository.RoleRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -51,11 +53,11 @@ class RoleTest {
   @BeforeEach
   void setUp() {
     role = new Role();
-    role.setRoleName("TEST_ROLE");
+    role.setRoleName(RoleNameEnum.ROLE_DEFAULT);
     role.setRoleDescription("TEST_ROLE_DESCRIPTION");
 
     permission = new Permission();
-    permission.setPermissionName("TEST_PERMISSION");
+    permission.setPermissionName(PermissionNameEnum.PERMISSION_READ);
   }
 
   /**
@@ -137,7 +139,7 @@ class RoleTest {
   void duplicateRoleShouldThrowException() {
     roleRepository.save(role);
     Role duplicateRole = new Role();
-    duplicateRole.setRoleName("TEST_ROLE");
+    duplicateRole.setRoleName(RoleNameEnum.ROLE_DEFAULT);
     assertThrows(Exception.class, () -> roleRepository.save(duplicateRole));
   }
 }
