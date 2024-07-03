@@ -19,7 +19,7 @@ public class ResourceNotFoundException extends RuntimeException {
    * @param fieldName    the name of the field that was searched for
    * @param fieldValue   the value of the field that was searched for
    */
-  public ResourceNotFoundException(String resourceName, String fieldName, Long fieldValue) {
+  public ResourceNotFoundException(String resourceName, String fieldName, Object fieldValue) {
     super(String.format("%s with %s: %s not found", resourceName, fieldName, fieldValue));
   }
 }
