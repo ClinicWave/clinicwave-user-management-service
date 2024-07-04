@@ -1,7 +1,10 @@
 package com.clinicwave.clinicwaveusermanagementservice.repository;
 
 import com.clinicwave.clinicwaveusermanagementservice.domain.Role;
+import com.clinicwave.clinicwaveusermanagementservice.enums.RoleNameEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
 
 /**
  * This interface extends JpaRepository and provides CRUD operations for Role entity.
@@ -10,4 +13,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author aamir on 6/8/24
  */
 public interface RoleRepository extends JpaRepository<Role, Long> {
+  Optional<Role> findByRoleName(RoleNameEnum roleName);
 }
