@@ -107,6 +107,42 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   /**
+   * Handles DuplicateRoleAssignmentException.
+   */
+  @ExceptionHandler(DuplicateRoleAssignmentException.class)
+  public ResponseEntity<ErrorResponseDto> handleDuplicateRoleAssignmentException(
+          Exception exception,
+          WebRequest webRequest
+  ) {
+    ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+            webRequest.getDescription(false),
+            HttpStatus.CONFLICT.value(),
+            exception.getMessage(),
+            LocalDateTime.now()
+    );
+
+    return new ResponseEntity<>(errorResponseDto, HttpStatus.CONFLICT);
+  }
+
+  /**
+   * Handles DefaultRoleRemovalException.
+   */
+  @ExceptionHandler(DefaultRoleRemovalException.class)
+  public ResponseEntity<ErrorResponseDto> handleDefaultRoleRemovalException(
+          Exception exception,
+          WebRequest webRequest
+  ) {
+    ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+            webRequest.getDescription(false),
+            HttpStatus.BAD_REQUEST.value(),
+            exception.getMessage(),
+            LocalDateTime.now()
+    );
+
+    return new ResponseEntity<>(errorResponseDto, HttpStatus.BAD_REQUEST);
+  }
+
+  /**
    * Handles MethodArgumentNotValidException.
    * This exception is thrown when validation on an argument annotated with @Valid fails.
    *
