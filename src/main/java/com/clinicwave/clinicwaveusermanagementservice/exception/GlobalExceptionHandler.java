@@ -42,14 +42,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
           Exception exception,
           WebRequest webRequest
   ) {
-    ErrorResponseDto errorResponseDto = new ErrorResponseDto(
-            webRequest.getDescription(false),
-            HttpStatus.INTERNAL_SERVER_ERROR.value(),
-            exception.getMessage(),
-            LocalDateTime.now()
-    );
-
-    return new ResponseEntity<>(errorResponseDto, HttpStatus.INTERNAL_SERVER_ERROR);
+    return createErrorResponse(exception, webRequest, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   /**
@@ -60,14 +53,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
           Exception exception,
           WebRequest webRequest
   ) {
-    ErrorResponseDto errorResponseDto = new ErrorResponseDto(
-            webRequest.getDescription(false),
-            HttpStatus.CONFLICT.value(),
-            exception.getMessage(),
-            LocalDateTime.now()
-    );
-
-    return new ResponseEntity<>(errorResponseDto, HttpStatus.CONFLICT);
+    return createErrorResponse(exception, webRequest, HttpStatus.CONFLICT);
   }
 
   /**
@@ -78,14 +64,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
           Exception exception,
           WebRequest webRequest
   ) {
-    ErrorResponseDto errorResponseDto = new ErrorResponseDto(
-            webRequest.getDescription(false),
-            HttpStatus.NOT_FOUND.value(),
-            exception.getMessage(),
-            LocalDateTime.now()
-    );
-
-    return new ResponseEntity<>(errorResponseDto, HttpStatus.NOT_FOUND);
+    return createErrorResponse(exception, webRequest, HttpStatus.NOT_FOUND);
   }
 
   /**
@@ -96,14 +75,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
           Exception exception,
           WebRequest webRequest
   ) {
-    ErrorResponseDto errorResponseDto = new ErrorResponseDto(
-            webRequest.getDescription(false),
-            HttpStatus.BAD_REQUEST.value(),
-            exception.getMessage(),
-            LocalDateTime.now()
-    );
-
-    return new ResponseEntity<>(errorResponseDto, HttpStatus.BAD_REQUEST);
+    return createErrorResponse(exception, webRequest, HttpStatus.BAD_REQUEST);
   }
 
   /**
@@ -114,14 +86,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
           Exception exception,
           WebRequest webRequest
   ) {
-    ErrorResponseDto errorResponseDto = new ErrorResponseDto(
-            webRequest.getDescription(false),
-            HttpStatus.CONFLICT.value(),
-            exception.getMessage(),
-            LocalDateTime.now()
-    );
-
-    return new ResponseEntity<>(errorResponseDto, HttpStatus.CONFLICT);
+    return createErrorResponse(exception, webRequest, HttpStatus.CONFLICT);
   }
 
   /**
@@ -132,14 +97,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
           Exception exception,
           WebRequest webRequest
   ) {
-    ErrorResponseDto errorResponseDto = new ErrorResponseDto(
-            webRequest.getDescription(false),
-            HttpStatus.BAD_REQUEST.value(),
-            exception.getMessage(),
-            LocalDateTime.now()
-    );
-
-    return new ResponseEntity<>(errorResponseDto, HttpStatus.BAD_REQUEST);
+    return createErrorResponse(exception, webRequest, HttpStatus.BAD_REQUEST);
   }
 
   /**
@@ -178,5 +136,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     );
 
     return new ResponseEntity<>(validationErrorResponseDto, status);
+  }
+
+  private ResponseEntity<ErrorResponseDto> createErrorResponse(
+          Exception exception,
+          WebRequest webRequest,
+          HttpStatus status
+  ) {
+    ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+            webRequest.getDescription(false),
+            status.value(),
+            exception.getMessage(),
+            LocalDateTime.now()
+    );
+
+    return new ResponseEntity<>(errorResponseDto, status);
   }
 }
