@@ -101,6 +101,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   /**
+   * Handles InactiveUserException.
+   */
+  @ExceptionHandler(InactiveUserException.class)
+  public ResponseEntity<ErrorResponseDto> handleInactiveUserException(
+          Exception exception,
+          WebRequest webRequest
+  ) {
+    return createErrorResponse(exception, webRequest, HttpStatus.BAD_REQUEST);
+  }
+
+  /**
    * Handles MethodArgumentNotValidException.
    * This exception is thrown when validation on an argument annotated with @Valid fails.
    *
