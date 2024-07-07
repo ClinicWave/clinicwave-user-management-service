@@ -125,6 +125,11 @@ public class ClinicWaveUserRoleAssignmentImpl implements ClinicWaveUserRoleAssig
     );
   }
 
+  /**
+   * Checks if the specified ClinicWaveUser entity is inactive.
+   * @param user the ClinicWaveUser entity to be checked
+   * @return true if the ClinicWaveUser entity is inactive, false otherwise
+   */
   private boolean isUserInactive(ClinicWaveUser user) {
     return user.getStatus() != UserStatusEnum.ACTIVE;
   }
