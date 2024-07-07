@@ -8,6 +8,7 @@ import com.clinicwave.clinicwaveusermanagementservice.enums.RoleNameEnum;
 import com.clinicwave.clinicwaveusermanagementservice.enums.UserStatusEnum;
 import com.clinicwave.clinicwaveusermanagementservice.exception.DefaultRoleRemovalException;
 import com.clinicwave.clinicwaveusermanagementservice.exception.DuplicateRoleAssignmentException;
+import com.clinicwave.clinicwaveusermanagementservice.exception.InactiveUserException;
 import com.clinicwave.clinicwaveusermanagementservice.exception.RoleMismatchException;
 import com.clinicwave.clinicwaveusermanagementservice.repository.ClinicWaveUserRepository;
 import com.clinicwave.clinicwaveusermanagementservice.repository.RoleRepository;
@@ -91,6 +92,27 @@ class ClinicWaveUserRoleAssignmentImplTest {
   }
 
   @Test
+  void provisionUser_InactiveUser() {
+    // Arrange
+    Long userId = 1L;
+    Long roleId = 2L;
+    ClinicWaveUser user = createMockUser(userId, RoleNameEnum.ROLE_DEFAULT);
+    user.setStatus(UserStatusEnum.INACTIVE); // Set the user status to INACTIVE
+    Role newRole = createMockRole(roleId, RoleNameEnum.ROLE_ADMIN);
+
+    when(clinicWaveUserRepository.findById(userId)).thenReturn(Optional.of(user));
+    when(roleRepository.findById(roleId)).thenReturn(Optional.of(newRole));
+
+    // Act & Assert
+    assertThrows(InactiveUserException.class,
+            () -> clinicWaveUserRoleAssignment.provisionUser(userId, roleId));
+
+    verify(clinicWaveUserRepository, times(1)).findById(userId);
+    verify(roleRepository, times(1)).findById(roleId);
+    verify(clinicWaveUserRepository, never()).save(any(ClinicWaveUser.class));
+  }
+
+  @Test
   void deProvisionUser_Success() {
     // Arrange
     Long userId = 1L;
@@ -160,6 +182,27 @@ class ClinicWaveUserRoleAssignmentImplTest {
     verify(clinicWaveUserRepository, never()).save(any(ClinicWaveUser.class));
   }
 
+  @Test
+  void deProvisionUser_InactiveUser() {
+    // Arrange
+    Long userId = 1L;
+    Long roleId = 2L;
+    ClinicWaveUser user = createMockUser(userId, RoleNameEnum.ROLE_DEFAULT);
+    user.setStatus(UserStatusEnum.INACTIVE); // Set the user status to INACTIVE
+    Role newRole = createMockRole(roleId, RoleNameEnum.ROLE_ADMIN);
+
+    when(clinicWaveUserRepository.findById(userId)).thenReturn(Optional.of(user));
+    when(roleRepository.findById(roleId)).thenReturn(Optional.of(newRole));
+
+    // Act & Assert
+    assertThrows(InactiveUserException.class,
+            () -> clinicWaveUserRoleAssignment.deProvisionUser(userId, roleId));
+
+    verify(clinicWaveUserRepository, times(1)).findById(userId);
+    verify(roleRepository, times(1)).findById(roleId);
+    verify(clinicWaveUserRepository, never()).save(any(ClinicWaveUser.class));
+  }
+
   private ClinicWaveUser createMockUser(Long id, RoleNameEnum roleName) {
     ClinicWaveUser user = new ClinicWaveUser();
     user.setId(id);
@@ -170,7 +213,7 @@ class ClinicWaveUserRoleAssignmentImplTest {
     user.setMobileNumber("1234567890");
     user.setDateOfBirth(LocalDate.of(1990, 1, 1));
     user.setGender(GenderEnum.MALE);
-    user.setStatus(UserStatusEnum.PENDING);
+    user.setStatus(UserStatusEnum.ACTIVE);
     user.setRole(createMockRole(id, roleName));
     return user;
   }
