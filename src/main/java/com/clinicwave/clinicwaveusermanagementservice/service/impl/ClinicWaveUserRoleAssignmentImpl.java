@@ -4,10 +4,8 @@ import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
 import com.clinicwave.clinicwaveusermanagementservice.domain.Role;
 import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserRoleAssignmentDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.RoleNameEnum;
-import com.clinicwave.clinicwaveusermanagementservice.exception.DefaultRoleRemovalException;
-import com.clinicwave.clinicwaveusermanagementservice.exception.DuplicateRoleAssignmentException;
-import com.clinicwave.clinicwaveusermanagementservice.exception.ResourceNotFoundException;
-import com.clinicwave.clinicwaveusermanagementservice.exception.RoleMismatchException;
+import com.clinicwave.clinicwaveusermanagementservice.enums.UserStatusEnum;
+import com.clinicwave.clinicwaveusermanagementservice.exception.*;
 import com.clinicwave.clinicwaveusermanagementservice.repository.ClinicWaveUserRepository;
 import com.clinicwave.clinicwaveusermanagementservice.repository.RoleRepository;
 import com.clinicwave.clinicwaveusermanagementservice.service.ClinicWaveUserRoleAssignment;
@@ -58,6 +56,11 @@ public class ClinicWaveUserRoleAssignmentImpl implements ClinicWaveUserRoleAssig
     ClinicWaveUser clinicWaveUser = findClinicWaveUserById(userId);
     Role role = findRoleById(roleId);
 
+    // Check if the user is inactive
+    if (isUserInactive(clinicWaveUser)) {
+      throw new InactiveUserException("User", "id", userId);
+    }
+
     // Check if the role to be assigned is the user's current role
     if (isCurrentRole(roleId, clinicWaveUser.getRole().getId())) {
       throw new DuplicateRoleAssignmentException("User", "id", userId, role.getRoleName());
@@ -94,6 +97,11 @@ public class ClinicWaveUserRoleAssignmentImpl implements ClinicWaveUserRoleAssig
     ClinicWaveUser clinicWaveUser = findClinicWaveUserById(userId);
     Role role = findRoleById(roleId);
 
+    // Check if the user is inactive
+    if (isUserInactive(clinicWaveUser)) {
+      throw new InactiveUserException("User", "id", userId);
+    }
+
     // Check if the role to be de-provisioned matches the user's current role
     if (!isCurrentRole(roleId, clinicWaveUser.getRole().getId())) {
       throw new RoleMismatchException("Role", "roleId", roleId);
@@ -115,6 +123,15 @@ public class ClinicWaveUserRoleAssignmentImpl implements ClinicWaveUserRoleAssig
             defaultRole.getRoleName(),
             LocalDateTime.now()
     );
+  }
+
+  /**
+   * Checks if the specified ClinicWaveUser entity is inactive.
+   * @param user the ClinicWaveUser entity to be checked
+   * @return true if the ClinicWaveUser entity is inactive, false otherwise
+   */
+  private boolean isUserInactive(ClinicWaveUser user) {
+    return user.getStatus() != UserStatusEnum.ACTIVE;
   }
 
   /**
