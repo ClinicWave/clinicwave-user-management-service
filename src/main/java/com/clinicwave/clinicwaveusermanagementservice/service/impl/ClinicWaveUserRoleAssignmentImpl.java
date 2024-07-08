@@ -57,7 +57,7 @@ public class ClinicWaveUserRoleAssignmentImpl implements ClinicWaveUserRoleAssig
     Role role = findRoleById(roleId);
 
     // Check if the user is inactive
-    if (isUserInactive(clinicWaveUser)) {
+    if (isUserInactive(clinicWaveUser.getStatus())) {
       throw new InactiveUserException("User", "id", userId);
     }
 
@@ -98,7 +98,7 @@ public class ClinicWaveUserRoleAssignmentImpl implements ClinicWaveUserRoleAssig
     Role role = findRoleById(roleId);
 
     // Check if the user is inactive
-    if (isUserInactive(clinicWaveUser)) {
+    if (isUserInactive(clinicWaveUser.getStatus())) {
       throw new InactiveUserException("User", "id", userId);
     }
 
@@ -127,11 +127,12 @@ public class ClinicWaveUserRoleAssignmentImpl implements ClinicWaveUserRoleAssig
 
   /**
    * Checks if the specified ClinicWaveUser entity is inactive.
-   * @param user the ClinicWaveUser entity to be checked
+   *
+   * @param status the status of the ClinicWaveUser entity to be checked
    * @return true if the ClinicWaveUser entity is inactive, false otherwise
    */
-  private boolean isUserInactive(ClinicWaveUser user) {
-    return user.getStatus() != UserStatusEnum.ACTIVE;
+  private boolean isUserInactive(UserStatusEnum status) {
+    return status != UserStatusEnum.ACTIVE;
   }
 
   /**
