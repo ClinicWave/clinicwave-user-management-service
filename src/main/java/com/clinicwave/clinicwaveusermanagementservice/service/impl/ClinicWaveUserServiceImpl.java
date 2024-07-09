@@ -3,17 +3,21 @@ package com.clinicwave.clinicwaveusermanagementservice.service.impl;
 import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
 import com.clinicwave.clinicwaveusermanagementservice.domain.Role;
 import com.clinicwave.clinicwaveusermanagementservice.domain.UserType;
+import com.clinicwave.clinicwaveusermanagementservice.domain.VerificationCode;
 import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.RoleNameEnum;
 import com.clinicwave.clinicwaveusermanagementservice.enums.UserStatusEnum;
 import com.clinicwave.clinicwaveusermanagementservice.enums.UserTypeEnum;
+import com.clinicwave.clinicwaveusermanagementservice.enums.VerificationCodeTypeEnum;
 import com.clinicwave.clinicwaveusermanagementservice.exception.ResourceNotFoundException;
 import com.clinicwave.clinicwaveusermanagementservice.mapper.ClinicWaveUserMapper;
 import com.clinicwave.clinicwaveusermanagementservice.repository.ClinicWaveUserRepository;
 import com.clinicwave.clinicwaveusermanagementservice.repository.RoleRepository;
 import com.clinicwave.clinicwaveusermanagementservice.repository.UserTypeRepository;
 import com.clinicwave.clinicwaveusermanagementservice.service.ClinicWaveUserService;
+import com.clinicwave.clinicwaveusermanagementservice.service.VerificationCodeService;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,24 +32,30 @@ import java.util.List;
  * @author aamir on 6/13/24
  */
 @Service
+@Slf4j
 public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
   private final ClinicWaveUserRepository clinicWaveUserRepository;
   private final RoleRepository roleRepository;
   private final UserTypeRepository userTypeRepository;
   private final ClinicWaveUserMapper clinicWaveUserMapper;
+  private final VerificationCodeService verificationCodeService;
 
   /**
    * Constructor for the ClinicWaveUserServiceImpl class.
    *
    * @param clinicWaveUserRepository the ClinicWaveUserRepository to be used for database operations
+   * @param roleRepository           the RoleRepository to be used for database operations
+   * @param userTypeRepository       the UserTypeRepository to be used for database operations
    * @param clinicWaveUserMapper     the ClinicWaveUserMapper to be used for object mapping
+   * @param verificationCodeService  the VerificationCodeService to be used for generating verification codes
    */
   @Autowired
-  public ClinicWaveUserServiceImpl(ClinicWaveUserRepository clinicWaveUserRepository, RoleRepository roleRepository, UserTypeRepository userTypeRepository, ClinicWaveUserMapper clinicWaveUserMapper) {
+  public ClinicWaveUserServiceImpl(ClinicWaveUserRepository clinicWaveUserRepository, RoleRepository roleRepository, UserTypeRepository userTypeRepository, ClinicWaveUserMapper clinicWaveUserMapper, VerificationCodeService verificationCodeService) {
     this.clinicWaveUserRepository = clinicWaveUserRepository;
     this.roleRepository = roleRepository;
     this.userTypeRepository = userTypeRepository;
     this.clinicWaveUserMapper = clinicWaveUserMapper;
+    this.verificationCodeService = verificationCodeService;
   }
 
   /**
@@ -76,6 +86,11 @@ public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
     clinicWaveUser.setUserType(findUserTypeByType(UserTypeEnum.USER_TYPE_DEFAULT));
 
     ClinicWaveUser savedClinicWaveUser = clinicWaveUserRepository.save(clinicWaveUser);
+
+    // Generate a verification code for the user
+    VerificationCode verificationCode = verificationCodeService.getVerificationCode(savedClinicWaveUser, VerificationCodeTypeEnum.EMAIL_VERIFICATION);
+    log.info("Verification code generated: {}", verificationCode);
+
     return clinicWaveUserMapper.toDto(savedClinicWaveUser);
   }
 
