@@ -3,16 +3,15 @@ package com.clinicwave.clinicwaveusermanagementservice.service.impl;
 import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
 import com.clinicwave.clinicwaveusermanagementservice.domain.Role;
 import com.clinicwave.clinicwaveusermanagementservice.domain.UserType;
+import com.clinicwave.clinicwaveusermanagementservice.domain.VerificationCode;
 import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserDto;
-import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;
-import com.clinicwave.clinicwaveusermanagementservice.enums.RoleNameEnum;
-import com.clinicwave.clinicwaveusermanagementservice.enums.UserStatusEnum;
-import com.clinicwave.clinicwaveusermanagementservice.enums.UserTypeEnum;
+import com.clinicwave.clinicwaveusermanagementservice.enums.*;
 import com.clinicwave.clinicwaveusermanagementservice.exception.ResourceNotFoundException;
 import com.clinicwave.clinicwaveusermanagementservice.mapper.ClinicWaveUserMapper;
 import com.clinicwave.clinicwaveusermanagementservice.repository.ClinicWaveUserRepository;
 import com.clinicwave.clinicwaveusermanagementservice.repository.RoleRepository;
 import com.clinicwave.clinicwaveusermanagementservice.repository.UserTypeRepository;
+import com.clinicwave.clinicwaveusermanagementservice.service.VerificationCodeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,6 +50,9 @@ class ClinicWaveUserServiceImplTest {
 
   @Mock
   private ClinicWaveUserMapper clinicWaveUserMapper;
+
+  @Mock
+  private VerificationCodeService verificationCodeService;
 
   @InjectMocks
   private ClinicWaveUserServiceImpl clinicWaveUserService;
@@ -114,10 +116,16 @@ class ClinicWaveUserServiceImplTest {
   @Test
   @DisplayName("createUser returns created ClinicWaveUser")
   void createUser_returnsCreatedClinicWaveUserDto() {
+    VerificationCode verificationCode = new VerificationCode();
+    verificationCode.setCode("123456");
+    verificationCode.setType(VerificationCodeTypeEnum.EMAIL_VERIFICATION);
+    verificationCode.setClinicWaveUser(clinicWaveUser);
+
     when(clinicWaveUserMapper.toEntity(clinicWaveUserDto)).thenReturn(clinicWaveUser);
     when(roleRepository.findByRoleName(RoleNameEnum.ROLE_DEFAULT)).thenReturn(Optional.of(role));
     when(userTypeRepository.findByType(UserTypeEnum.USER_TYPE_DEFAULT)).thenReturn(Optional.of(userType));
     when(clinicWaveUserRepository.save(clinicWaveUser)).thenReturn(clinicWaveUser);
+    when(verificationCodeService.getVerificationCode(clinicWaveUser, VerificationCodeTypeEnum.EMAIL_VERIFICATION)).thenReturn(verificationCode);
     when(clinicWaveUserMapper.toDto(clinicWaveUser)).thenReturn(clinicWaveUserDto);
 
     ClinicWaveUserDto result = clinicWaveUserService.createUser(clinicWaveUserDto);
@@ -128,6 +136,7 @@ class ClinicWaveUserServiceImplTest {
     assertEquals(userType, clinicWaveUser.getUserType());
     verify(clinicWaveUserMapper, times(1)).toEntity(clinicWaveUserDto);
     verify(clinicWaveUserRepository, times(1)).save(clinicWaveUser);
+    verify(verificationCodeService, times(1)).getVerificationCode(clinicWaveUser, VerificationCodeTypeEnum.EMAIL_VERIFICATION);
     verify(clinicWaveUserMapper, times(1)).toDto(clinicWaveUser);
   }
 
