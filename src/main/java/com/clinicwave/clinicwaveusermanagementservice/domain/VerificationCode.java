@@ -4,6 +4,8 @@ import com.clinicwave.clinicwaveusermanagementservice.audit.Audit;
 import com.clinicwave.clinicwaveusermanagementservice.enums.VerificationCodeTypeEnum;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
@@ -49,5 +51,6 @@ public class VerificationCode extends Audit {
 
   @ManyToOne
   @JoinColumn(nullable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private ClinicWaveUser clinicWaveUser;
 }
