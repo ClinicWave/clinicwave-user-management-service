@@ -10,5 +10,6 @@ public enum UserStatusEnum {
   ACTIVE,
   INACTIVE,
   PENDING,
+  VERIFIED,
   SUSPENDED
 }
