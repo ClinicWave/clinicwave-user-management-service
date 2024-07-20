@@ -48,6 +48,7 @@ public class NotificationServiceClientImpl implements NotificationServiceClient 
       log.info("Notification sent successfully to {}", notificationRequestDto.recipient());
     } catch (RestClientException e) {
       log.error("Failed to send notification to {}: {}", notificationRequestDto.recipient(), e.getMessage());
+      throw e;
     }
   }
 }
