@@ -1,5 +1,6 @@
 package com.clinicwave.clinicwaveusermanagementservice.controller.integration.testcontainers;
 
+import com.clinicwave.clinicwaveusermanagementservice.config.NotificationServiceClientMockConfig;
 import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;
 import com.clinicwave.clinicwaveusermanagementservice.repository.ClinicWaveUserRepository;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -32,14 +34,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * The tests are written using the JUnit 5 testing framework.
  * The tests use the Spring TestRestTemplate class to simulate HTTP requests to the controller.
  * The tests use the @SpringBootTest annotation to start the Spring Boot application context.
- * The tests use the @ActiveProfiles annotation to specify the active profiles for the test.
+ * The tests use the @ActiveProfiles annotation to specify the active profiles for the local.
  * The tests use the @Testcontainers annotation to enable support for Testcontainers.
  * The tests use the PostgreSQLContainer class to start a PostgreSQL container for the test.
  * The tests use the DynamicPropertySource annotation to set the datasource properties for the test.
  * The tests use the ClinicWaveUserRepository to interact with the database.
  */
-@ActiveProfiles("test")
+@ActiveProfiles("local")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import(NotificationServiceClientMockConfig.class)
 @Testcontainers
 class ClinicWaveUserControllerTestContainersIntegrationTest {
   // Define a PostgreSQL container for the test

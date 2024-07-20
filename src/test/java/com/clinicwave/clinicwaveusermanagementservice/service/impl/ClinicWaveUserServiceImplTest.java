@@ -1,10 +1,12 @@
 package com.clinicwave.clinicwaveusermanagementservice.service.impl;
 
+import com.clinicwave.clinicwaveusermanagementservice.client.NotificationServiceClient;
 import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
 import com.clinicwave.clinicwaveusermanagementservice.domain.Role;
 import com.clinicwave.clinicwaveusermanagementservice.domain.UserType;
 import com.clinicwave.clinicwaveusermanagementservice.domain.VerificationCode;
 import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserDto;
+import com.clinicwave.clinicwaveusermanagementservice.dto.NotificationRequestDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.*;
 import com.clinicwave.clinicwaveusermanagementservice.exception.ResourceNotFoundException;
 import com.clinicwave.clinicwaveusermanagementservice.mapper.ClinicWaveUserMapper;
@@ -16,14 +18,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,7 +39,6 @@ import static org.mockito.Mockito.*;
  *
  * @author aamir on 6/18/24
  */
-@ActiveProfiles("h2")
 @ExtendWith(MockitoExtension.class)
 class ClinicWaveUserServiceImplTest {
   @Mock
@@ -53,6 +55,9 @@ class ClinicWaveUserServiceImplTest {
 
   @Mock
   private VerificationCodeService verificationCodeService;
+
+  @Mock
+  private NotificationServiceClient notificationServiceClient;
 
   @InjectMocks
   private ClinicWaveUserServiceImpl clinicWaveUserService;
@@ -138,6 +143,25 @@ class ClinicWaveUserServiceImplTest {
     verify(clinicWaveUserRepository, times(1)).save(clinicWaveUser);
     verify(verificationCodeService, times(1)).getVerificationCode(clinicWaveUser, VerificationCodeTypeEnum.EMAIL_VERIFICATION);
     verify(clinicWaveUserMapper, times(1)).toDto(clinicWaveUser);
+
+    // Verify notification was sent and capture the argument
+    ArgumentCaptor<NotificationRequestDto> notificationCaptor = ArgumentCaptor.forClass(NotificationRequestDto.class);
+    verify(notificationServiceClient, times(1)).sendNotification(notificationCaptor.capture());
+
+    // Verify notification details
+    NotificationRequestDto capturedNotification = notificationCaptor.getValue();
+    assertEquals(clinicWaveUser.getEmail(), capturedNotification.recipient());
+    assertEquals("Verify Your Email", capturedNotification.subject());
+    assertEquals("email-verification", capturedNotification.templateName());
+    assertEquals(NotificationTypeEnum.EMAIL, capturedNotification.type());
+    assertEquals(NotificationCategoryEnum.VERIFICATION, capturedNotification.category());
+
+    Map<String, Object> expectedTemplateVariables = Map.of(
+            "verificationCode", verificationCode.getCode(),
+            "userName", clinicWaveUser.getUsername(),
+            "verificationType", verificationCode.getType().name()
+    );
+    assertEquals(expectedTemplateVariables, capturedNotification.templateVariables());
   }
 
   @Test

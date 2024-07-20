@@ -1,5 +1,6 @@
 package com.clinicwave.clinicwaveusermanagementservice.controller.integration;
 
+import com.clinicwave.clinicwaveusermanagementservice.config.NotificationServiceClientMockConfig;
 import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;
 import com.clinicwave.clinicwaveusermanagementservice.repository.ClinicWaveUserRepository;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * The tests use the ClinicWaveUserRepository to interact with the database.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Import(NotificationServiceClientMockConfig.class)
 @AutoConfigureTestDatabase
 class ClinicWaveUserControllerIntegrationTest {
   private final TestRestTemplate restTemplate;
