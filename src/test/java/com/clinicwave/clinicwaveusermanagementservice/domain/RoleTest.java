@@ -10,7 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -25,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author aamir on 6/8/24
  */
-@ActiveProfiles("h2")
 @SpringBootTest
 class RoleTest {
   private Role role;
