@@ -1,14 +1,13 @@
 package com.clinicwave.clinicwaveusermanagementservice.service.impl;
 
+import com.clinicwave.clinicwaveusermanagementservice.client.NotificationServiceClient;
 import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
 import com.clinicwave.clinicwaveusermanagementservice.domain.Role;
 import com.clinicwave.clinicwaveusermanagementservice.domain.UserType;
 import com.clinicwave.clinicwaveusermanagementservice.domain.VerificationCode;
 import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserDto;
-import com.clinicwave.clinicwaveusermanagementservice.enums.RoleNameEnum;
-import com.clinicwave.clinicwaveusermanagementservice.enums.UserStatusEnum;
-import com.clinicwave.clinicwaveusermanagementservice.enums.UserTypeEnum;
-import com.clinicwave.clinicwaveusermanagementservice.enums.VerificationCodeTypeEnum;
+import com.clinicwave.clinicwaveusermanagementservice.dto.NotificationRequestDto;
+import com.clinicwave.clinicwaveusermanagementservice.enums.*;
 import com.clinicwave.clinicwaveusermanagementservice.exception.ResourceNotFoundException;
 import com.clinicwave.clinicwaveusermanagementservice.mapper.ClinicWaveUserMapper;
 import com.clinicwave.clinicwaveusermanagementservice.repository.ClinicWaveUserRepository;
@@ -22,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class implements the ClinicWaveUserService interface and provides methods to manage ClinicWaveUser entities.
@@ -39,23 +39,26 @@ public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
   private final UserTypeRepository userTypeRepository;
   private final ClinicWaveUserMapper clinicWaveUserMapper;
   private final VerificationCodeService verificationCodeService;
+  private final NotificationServiceClient notificationServiceClient;
 
   /**
    * Constructor for the ClinicWaveUserServiceImpl class.
    *
-   * @param clinicWaveUserRepository the ClinicWaveUserRepository to be used for database operations
-   * @param roleRepository           the RoleRepository to be used for database operations
-   * @param userTypeRepository       the UserTypeRepository to be used for database operations
-   * @param clinicWaveUserMapper     the ClinicWaveUserMapper to be used for object mapping
-   * @param verificationCodeService  the VerificationCodeService to be used for generating verification codes
+   * @param clinicWaveUserRepository  the ClinicWaveUserRepository to be used for database operations
+   * @param roleRepository            the RoleRepository to be used for database operations
+   * @param userTypeRepository        the UserTypeRepository to be used for database operations
+   * @param clinicWaveUserMapper      the ClinicWaveUserMapper to be used for object mapping
+   * @param verificationCodeService   the VerificationCodeService to be used for generating verification codes
+   * @param notificationServiceClient the NotificationServiceClient to be used for sending notifications
    */
   @Autowired
-  public ClinicWaveUserServiceImpl(ClinicWaveUserRepository clinicWaveUserRepository, RoleRepository roleRepository, UserTypeRepository userTypeRepository, ClinicWaveUserMapper clinicWaveUserMapper, VerificationCodeService verificationCodeService) {
+  public ClinicWaveUserServiceImpl(ClinicWaveUserRepository clinicWaveUserRepository, RoleRepository roleRepository, UserTypeRepository userTypeRepository, ClinicWaveUserMapper clinicWaveUserMapper, VerificationCodeService verificationCodeService, NotificationServiceClient notificationServiceClient) {
     this.clinicWaveUserRepository = clinicWaveUserRepository;
     this.roleRepository = roleRepository;
     this.userTypeRepository = userTypeRepository;
     this.clinicWaveUserMapper = clinicWaveUserMapper;
     this.verificationCodeService = verificationCodeService;
+    this.notificationServiceClient = notificationServiceClient;
   }
 
   /**
@@ -90,6 +93,21 @@ public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
     // Generate a verification code for the user
     VerificationCode verificationCode = verificationCodeService.getVerificationCode(savedClinicWaveUser, VerificationCodeTypeEnum.EMAIL_VERIFICATION);
     log.info("Verification code generated: {}", verificationCode);
+
+    // Send a notification to the user with the verification code
+    NotificationRequestDto notificationRequestDto = new NotificationRequestDto(
+            clinicWaveUser.getEmail(),
+            "Verify Your Email",
+            "email-verification",
+            Map.of(
+                    "verificationCode", verificationCode.getCode(),
+                    "userName", clinicWaveUser.getUsername(),
+                    "verificationType", verificationCode.getType().name()
+            ),
+            NotificationTypeEnum.EMAIL,
+            NotificationCategoryEnum.VERIFICATION
+    );
+    notificationServiceClient.sendNotification(notificationRequestDto);
 
     return clinicWaveUserMapper.toDto(savedClinicWaveUser);
   }
