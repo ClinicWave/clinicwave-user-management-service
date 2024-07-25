@@ -31,3 +31,15 @@ build/
 
 ### VS Code ###
 .vscode/
+
+src/main/java/com/clinicwave/clinicwaveusermanagementservice/mapper/
+src/test/java/com/clinicwave/clinicwaveusermanagementservice/mapper/
+src/main/java/com/clinicwave/clinicwaveusermanagementservice/service/PermissionService.java
+src/main/java/com/clinicwave/clinicwaveusermanagementservice/service/RoleService.java
+src/main/java/com/clinicwave/clinicwaveusermanagementservice/service/UserTypeService.java
+src/main/java/com/clinicwave/clinicwaveusermanagementservice/service/impl/PermissionServiceImpl.java
+src/main/java/com/clinicwave/clinicwaveusermanagementservice/service/impl/RoleServiceImpl.java
+src/main/java/com/clinicwave/clinicwaveusermanagementservice/service/impl/UserTypeServiceImpl.java
+src/test/java/com/clinicwave/clinicwaveusermanagementservice/service/impl/PermissionServiceImplTest.java
+src/test/java/com/clinicwave/clinicwaveusermanagementservice/service/impl/RoleServiceImplTest.java
+src/test/java/com/clinicwave/clinicwaveusermanagementservice/service/impl/UserTypeServiceImplTest.java
