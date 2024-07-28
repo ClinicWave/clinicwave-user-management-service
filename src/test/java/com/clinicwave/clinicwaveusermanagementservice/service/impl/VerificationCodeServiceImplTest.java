@@ -2,9 +2,15 @@ package com.clinicwave.clinicwaveusermanagementservice.service.impl;
 
 import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
 import com.clinicwave.clinicwaveusermanagementservice.domain.VerificationCode;
+import com.clinicwave.clinicwaveusermanagementservice.dto.VerificationRequestDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;
 import com.clinicwave.clinicwaveusermanagementservice.enums.UserStatusEnum;
 import com.clinicwave.clinicwaveusermanagementservice.enums.VerificationCodeTypeEnum;
+import com.clinicwave.clinicwaveusermanagementservice.exception.InvalidVerificationCodeException;
+import com.clinicwave.clinicwaveusermanagementservice.exception.ResourceNotFoundException;
+import com.clinicwave.clinicwaveusermanagementservice.exception.VerificationCodeAlreadyUsedException;
+import com.clinicwave.clinicwaveusermanagementservice.exception.VerificationCodeExpiredException;
+import com.clinicwave.clinicwaveusermanagementservice.repository.ClinicWaveUserRepository;
 import com.clinicwave.clinicwaveusermanagementservice.repository.VerificationCodeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +21,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -31,10 +39,14 @@ class VerificationCodeServiceImplTest {
   @Mock
   private VerificationCodeRepository verificationCodeRepository;
 
+  @Mock
+  private ClinicWaveUserRepository clinicWaveUserRepository;
+
   @InjectMocks
   private VerificationCodeServiceImpl verificationCodeService;
 
   private ClinicWaveUser user;
+  private VerificationCode verificationCode;
 
   /**
    * Sets up the test environment before each test.
@@ -51,7 +63,7 @@ class VerificationCodeServiceImplTest {
     user.setGender(GenderEnum.MALE);
     user.setStatus(UserStatusEnum.PENDING);
 
-    VerificationCode verificationCode = new VerificationCode();
+    verificationCode = new VerificationCode();
     verificationCode.setCode("123456");
     verificationCode.setType(VerificationCodeTypeEnum.PASSWORD_RESET);
     verificationCode.setClinicWaveUser(user);
@@ -100,5 +112,80 @@ class VerificationCodeServiceImplTest {
 
     assertNotNull(actualVerificationCode.getClinicWaveUser());
     assertEquals(user.getId(), actualVerificationCode.getClinicWaveUser().getId());
+  }
+
+  @Test
+  @DisplayName("verifyAccount returns VerificationRequestDto when verification is successful")
+  void verifyAccountReturnsVerificationRequestDtoWhenVerificationIsSuccessful() {
+    VerificationRequestDto verificationRequestDto = new VerificationRequestDto("testuser@example.com", "123456");
+
+    when(clinicWaveUserRepository.findByEmail("testuser@example.com")).thenReturn(Optional.of(user));
+    when(verificationCodeRepository.findTopByClinicWaveUserAndTypeOrderByCreatedAtDesc(user, VerificationCodeTypeEnum.EMAIL_VERIFICATION)).thenReturn(Optional.of(verificationCode));
+    when(verificationCodeRepository.save(any(VerificationCode.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    when(clinicWaveUserRepository.save(any(ClinicWaveUser.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    verificationCodeService.verifyAccount(verificationRequestDto);
+
+    assertTrue(verificationCode.getIsUsed());
+    assertTrue(verificationCode.getIsVerified());
+    assertEquals(UserStatusEnum.VERIFIED, user.getStatus());
+  }
+
+  @Test
+  @DisplayName("verifyAccount throws InvalidVerificationCodeException when code is invalid")
+  void verifyAccountThrowsInvalidVerificationCodeExceptionWhenCodeIsInvalid() {
+    VerificationRequestDto verificationRequestDto = new VerificationRequestDto("testuser@example.com", "654321");
+
+    when(clinicWaveUserRepository.findByEmail("testuser@example.com")).thenReturn(Optional.of(user));
+    when(verificationCodeRepository.findTopByClinicWaveUserAndTypeOrderByCreatedAtDesc(user, VerificationCodeTypeEnum.EMAIL_VERIFICATION)).thenReturn(Optional.of(verificationCode));
+
+    assertThrows(InvalidVerificationCodeException.class, () -> verificationCodeService.verifyAccount(verificationRequestDto));
+  }
+
+  @Test
+  @DisplayName("verifyAccount throws VerificationCodeAlreadyUsedException when code is already used")
+  void verifyAccountThrowsVerificationCodeAlreadyUsedExceptionWhenCodeIsAlreadyUsed() {
+    VerificationRequestDto verificationRequestDto = new VerificationRequestDto("testuser@example.com", "123456");
+
+    verificationCode.setIsUsed(true);
+
+    when(clinicWaveUserRepository.findByEmail("testuser@example.com")).thenReturn(Optional.of(user));
+    when(verificationCodeRepository.findTopByClinicWaveUserAndTypeOrderByCreatedAtDesc(user, VerificationCodeTypeEnum.EMAIL_VERIFICATION)).thenReturn(Optional.of(verificationCode));
+
+    assertThrows(VerificationCodeAlreadyUsedException.class, () -> verificationCodeService.verifyAccount(verificationRequestDto));
+  }
+
+  @Test
+  @DisplayName("verifyAccount throws VerificationCodeExpiredException when code is expired")
+  void verifyAccountThrowsVerificationCodeExpiredExceptionWhenCodeIsExpired() {
+    VerificationRequestDto verificationRequestDto = new VerificationRequestDto("testuser@example.com", "123456");
+
+    verificationCode.setExpiryDate(LocalDateTime.now().minusDays(1));
+
+    when(clinicWaveUserRepository.findByEmail("testuser@example.com")).thenReturn(Optional.of(user));
+    when(verificationCodeRepository.findTopByClinicWaveUserAndTypeOrderByCreatedAtDesc(user, VerificationCodeTypeEnum.EMAIL_VERIFICATION)).thenReturn(Optional.of(verificationCode));
+
+    assertThrows(VerificationCodeExpiredException.class, () -> verificationCodeService.verifyAccount(verificationRequestDto));
+  }
+
+  @Test
+  @DisplayName("verifyAccount throws ResourceNotFoundException when user is not found")
+  void verifyAccountThrowsResourceNotFoundExceptionWhenUserIsNotFound() {
+    VerificationRequestDto verificationRequestDto = new VerificationRequestDto("nonexistent@example.com", "123456");
+
+    when(clinicWaveUserRepository.findByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
+
+    assertThrows(ResourceNotFoundException.class, () -> verificationCodeService.verifyAccount(verificationRequestDto));
+  }
+
+  @Test
+  @DisplayName("verifyAccount throws ResourceNotFoundException when verification code is not found")
+  void verifyAccountThrowsResourceNotFoundExceptionWhenVerificationCodeIsNotFound() {
+    VerificationRequestDto verificationRequestDto = new VerificationRequestDto("testuser@example.com", "123456");
+
+    when(clinicWaveUserRepository.findByEmail("testuser@example.com")).thenReturn(Optional.of(user));
+    when(verificationCodeRepository.findTopByClinicWaveUserAndTypeOrderByCreatedAtDesc(user, VerificationCodeTypeEnum.EMAIL_VERIFICATION)).thenReturn(Optional.empty());
+
+    assertThrows(ResourceNotFoundException.class, () -> verificationCodeService.verifyAccount(verificationRequestDto));
   }
 }
