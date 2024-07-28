@@ -2,6 +2,7 @@ package com.clinicwave.clinicwaveusermanagementservice.service;
 
 import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
 import com.clinicwave.clinicwaveusermanagementservice.domain.VerificationCode;
+import com.clinicwave.clinicwaveusermanagementservice.dto.VerificationRequestDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.VerificationCodeTypeEnum;
 
 /**
@@ -13,4 +14,6 @@ import com.clinicwave.clinicwaveusermanagementservice.enums.VerificationCodeType
  */
 public interface VerificationCodeService {
   VerificationCode getVerificationCode(ClinicWaveUser clinicWaveUser, VerificationCodeTypeEnum verificationCodeType);
+
+  void verifyAccount(VerificationRequestDto verificationRequestDto);
 }
