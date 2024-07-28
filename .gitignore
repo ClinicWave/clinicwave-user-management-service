@@ -43,3 +43,5 @@ src/main/java/com/clinicwave/clinicwaveusermanagementservice/service/impl/UserTy
 src/test/java/com/clinicwave/clinicwaveusermanagementservice/service/impl/PermissionServiceImplTest.java
 src/test/java/com/clinicwave/clinicwaveusermanagementservice/service/impl/RoleServiceImplTest.java
 src/test/java/com/clinicwave/clinicwaveusermanagementservice/service/impl/UserTypeServiceImplTest.java
+src/main/java/com/clinicwave/clinicwaveusermanagementservice/util/
+src/test/java/com/clinicwave/clinicwaveusermanagementservice/util/
