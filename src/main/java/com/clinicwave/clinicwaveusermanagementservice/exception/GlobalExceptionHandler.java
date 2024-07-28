@@ -112,6 +112,39 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   }
 
   /**
+   * Handles InvalidVerificationCodeException.
+   */
+  @ExceptionHandler(InvalidVerificationCodeException.class)
+  public ResponseEntity<ErrorResponseDto> handleInvalidVerificationCodeException(
+          Exception exception,
+          WebRequest webRequest
+  ) {
+    return createErrorResponse(exception, webRequest, HttpStatus.BAD_REQUEST);
+  }
+
+  /**
+   * Handles VerificationCodeAlreadyUsedException.
+   */
+  @ExceptionHandler(VerificationCodeAlreadyUsedException.class)
+  public ResponseEntity<ErrorResponseDto> handleVerificationCodeAlreadyUsedException(
+          Exception exception,
+          WebRequest webRequest
+  ) {
+    return createErrorResponse(exception, webRequest, HttpStatus.CONFLICT);
+  }
+
+  /**
+   * Handles VerificationCodeExpiredException.
+   */
+  @ExceptionHandler(VerificationCodeExpiredException.class)
+  public ResponseEntity<ErrorResponseDto> handleVerificationCodeExpiredException(
+          Exception exception,
+          WebRequest webRequest
+  ) {
+    return createErrorResponse(exception, webRequest, HttpStatus.GONE);
+  }
+
+  /**
    * Handles MethodArgumentNotValidException.
    * This exception is thrown when validation on an argument annotated with @Valid fails.
    *
