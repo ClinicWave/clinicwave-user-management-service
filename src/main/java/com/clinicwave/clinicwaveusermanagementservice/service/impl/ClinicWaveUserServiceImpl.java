@@ -18,8 +18,11 @@ import com.clinicwave.clinicwaveusermanagementservice.service.VerificationCodeSe
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +43,9 @@ public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
   private final ClinicWaveUserMapper clinicWaveUserMapper;
   private final VerificationCodeService verificationCodeService;
   private final NotificationServiceClient notificationServiceClient;
+
+  @Value("${clinicwave-user-management-frontend-base-url}")
+  private String clinicwaveUserManagementFrontendBaseUrl;
 
   /**
    * Constructor for the ClinicWaveUserServiceImpl class.
@@ -94,6 +100,9 @@ public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
     VerificationCode verificationCode = verificationCodeService.getVerificationCode(savedClinicWaveUser, VerificationCodeTypeEnum.EMAIL_VERIFICATION);
     log.info("Verification code generated: {}", verificationCode);
 
+    // Generate a verification link for the user
+    String verificationLink = generateVerificationLink(clinicWaveUser.getEmail());
+
     // Send a notification to the user with the verification code
     NotificationRequestDto notificationRequestDto = new NotificationRequestDto(
             clinicWaveUser.getEmail(),
@@ -102,7 +111,8 @@ public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
             Map.of(
                     "verificationCode", verificationCode.getCode(),
                     "userName", clinicWaveUser.getUsername(),
-                    "verificationType", verificationCode.getType().name()
+                    "verificationType", verificationCode.getType().name(),
+                    "verificationLink", verificationLink
             ),
             NotificationTypeEnum.EMAIL,
             NotificationCategoryEnum.VERIFICATION
@@ -156,6 +166,18 @@ public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
     return clinicWaveUserList.stream()
             .map(clinicWaveUserMapper::toDto)
             .toList();
+  }
+
+  /**
+   * Generates a verification link for the user based on their email.
+   * clinicwaveUserManagementFrontendBaseUrl is the base URL of the ClinicWave User Management frontend application.
+   * The email is encoded using UTF-8 to ensure that special characters are handled correctly.
+   *
+   * @param email the email of the user for whom the verification link is to be generated
+   * @return the generated verification link
+   */
+  private String generateVerificationLink(String email) {
+    return clinicwaveUserManagementFrontendBaseUrl + "/verification/verify?email=" + URLEncoder.encode(email, StandardCharsets.UTF_8);
   }
 
   /**

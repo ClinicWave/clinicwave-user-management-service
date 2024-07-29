@@ -22,7 +22,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -74,6 +77,8 @@ class ClinicWaveUserServiceImplTest {
    */
   @BeforeEach
   void setUp() {
+    ReflectionTestUtils.setField(clinicWaveUserService, "clinicwaveUserManagementFrontendBaseUrl", "http://localhost:5173");
+
     clinicWaveUser = new ClinicWaveUser();
     clinicWaveUser.setId(1L);
     clinicWaveUser.setFirstName("John");
@@ -148,6 +153,9 @@ class ClinicWaveUserServiceImplTest {
     ArgumentCaptor<NotificationRequestDto> notificationCaptor = ArgumentCaptor.forClass(NotificationRequestDto.class);
     verify(notificationServiceClient, times(1)).sendNotification(notificationCaptor.capture());
 
+    String encodedEmail = URLEncoder.encode(clinicWaveUser.getEmail(), StandardCharsets.UTF_8);
+    String expectedVerificationLink = "http://localhost:5173/verification/verify?email=" + encodedEmail;
+
     // Verify notification details
     NotificationRequestDto capturedNotification = notificationCaptor.getValue();
     assertEquals(clinicWaveUser.getEmail(), capturedNotification.recipient());
@@ -155,11 +163,13 @@ class ClinicWaveUserServiceImplTest {
     assertEquals("email-verification", capturedNotification.templateName());
     assertEquals(NotificationTypeEnum.EMAIL, capturedNotification.type());
     assertEquals(NotificationCategoryEnum.VERIFICATION, capturedNotification.category());
+    assertEquals(expectedVerificationLink, capturedNotification.templateVariables().get("verificationLink"));
 
     Map<String, Object> expectedTemplateVariables = Map.of(
             "verificationCode", verificationCode.getCode(),
             "userName", clinicWaveUser.getUsername(),
-            "verificationType", verificationCode.getType().name()
+            "verificationType", verificationCode.getType().name(),
+            "verificationLink", expectedVerificationLink
     );
     assertEquals(expectedTemplateVariables, capturedNotification.templateVariables());
   }
