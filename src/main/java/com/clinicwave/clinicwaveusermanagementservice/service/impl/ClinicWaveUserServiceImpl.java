@@ -87,37 +87,18 @@ public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
    */
   @Override
   public ClinicWaveUserDto createUser(ClinicWaveUserDto clinicWaveUserDto) {
-    ClinicWaveUser clinicWaveUser = clinicWaveUserMapper.toEntity(clinicWaveUserDto);
-
-    // Set default values for status, role, and user type
-    clinicWaveUser.setStatus(UserStatusEnum.PENDING);
-    clinicWaveUser.setRole(findRoleByRoleName(RoleNameEnum.ROLE_DEFAULT));
-    clinicWaveUser.setUserType(findUserTypeByType(UserTypeEnum.USER_TYPE_DEFAULT));
+    ClinicWaveUser clinicWaveUser = prepareNewClinicWaveUser(clinicWaveUserDto);
 
     ClinicWaveUser savedClinicWaveUser = clinicWaveUserRepository.save(clinicWaveUser);
 
     // Generate a verification code for the user
-    VerificationCode verificationCode = verificationCodeService.getVerificationCode(savedClinicWaveUser, VerificationCodeTypeEnum.EMAIL_VERIFICATION);
-    log.info("Verification code generated: {}", verificationCode);
+    VerificationCode verificationCode = generateVerificationCode(savedClinicWaveUser);
 
     // Generate a verification link for the user
     String verificationLink = generateVerificationLink(clinicWaveUser.getEmail());
 
     // Send a notification to the user with the verification code
-    NotificationRequestDto notificationRequestDto = new NotificationRequestDto(
-            clinicWaveUser.getEmail(),
-            "Verify Your Email",
-            "email-verification",
-            Map.of(
-                    "verificationCode", verificationCode.getCode(),
-                    "userName", clinicWaveUser.getUsername(),
-                    "verificationType", verificationCode.getType().name(),
-                    "verificationLink", verificationLink
-            ),
-            NotificationTypeEnum.EMAIL,
-            NotificationCategoryEnum.VERIFICATION
-    );
-    notificationServiceClient.sendNotification(notificationRequestDto);
+    sendVerificationNotification(savedClinicWaveUser, verificationCode, verificationLink);
 
     return clinicWaveUserMapper.toDto(savedClinicWaveUser);
   }
@@ -169,6 +150,34 @@ public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
   }
 
   /**
+   * Prepares a new ClinicWaveUser entity from the provided ClinicWaveUserDto data transfer object.
+   *
+   * @param clinicWaveUserDto the ClinicWaveUserDto data transfer object to be used for creating the entity
+   * @return the prepared ClinicWaveUser entity
+   */
+  private ClinicWaveUser prepareNewClinicWaveUser(ClinicWaveUserDto clinicWaveUserDto) {
+    ClinicWaveUser clinicWaveUser = clinicWaveUserMapper.toEntity(clinicWaveUserDto);
+
+    // Set default values for status, role, and user type
+    clinicWaveUser.setStatus(UserStatusEnum.PENDING);
+    clinicWaveUser.setRole(findRoleByRoleName(RoleNameEnum.ROLE_DEFAULT));
+    clinicWaveUser.setUserType(findUserTypeByType(UserTypeEnum.USER_TYPE_DEFAULT));
+    return clinicWaveUser;
+  }
+
+  /**
+   * Generates a verification code for the specified user.
+   *
+   * @param clinicWaveUser the user for whom the verification code is to be generated
+   * @return the generated verification code
+   */
+  private VerificationCode generateVerificationCode(ClinicWaveUser clinicWaveUser) {
+    VerificationCode verificationCode = verificationCodeService.getVerificationCode(clinicWaveUser, VerificationCodeTypeEnum.EMAIL_VERIFICATION);
+    log.info("Verification code generated for user {}: {}", clinicWaveUser.getUsername(), verificationCode);
+    return verificationCode;
+  }
+
+  /**
    * Generates a verification link for the user based on their email.
    * clinicwaveUserManagementFrontendBaseUrl is the base URL of the ClinicWave User Management frontend application.
    * The email is encoded using UTF-8 to ensure that special characters are handled correctly.
@@ -178,6 +187,30 @@ public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
    */
   private String generateVerificationLink(String email) {
     return clinicwaveUserManagementFrontendBaseUrl + "/verification/verify?email=" + URLEncoder.encode(email, StandardCharsets.UTF_8);
+  }
+
+  /**
+   * Sends a verification notification to the specified user with the verification code and verification link.
+   *
+   * @param clinicWaveUser   the user to whom the notification is to be sent
+   * @param verificationCode the verification code to be sent in the notification
+   * @param verificationLink the verification link to be sent in the notification
+   */
+  private void sendVerificationNotification(ClinicWaveUser clinicWaveUser, VerificationCode verificationCode, String verificationLink) {
+    NotificationRequestDto notificationRequestDto = new NotificationRequestDto(
+            clinicWaveUser.getEmail(),
+            "Verify Your Email",
+            "email-verification",
+            Map.of(
+                    "verificationCode", verificationCode.getCode(),
+                    "userName", clinicWaveUser.getUsername(),
+                    "verificationType", verificationCode.getType().name(),
+                    "verificationLink", verificationLink
+            ),
+            NotificationTypeEnum.EMAIL,
+            NotificationCategoryEnum.VERIFICATION
+    );
+    notificationServiceClient.sendNotification(notificationRequestDto);
   }
 
   /**
