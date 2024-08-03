@@ -15,6 +15,7 @@ import com.clinicwave.clinicwaveusermanagementservice.repository.RoleRepository;
 import com.clinicwave.clinicwaveusermanagementservice.repository.UserTypeRepository;
 import com.clinicwave.clinicwaveusermanagementservice.service.ClinicWaveUserService;
 import com.clinicwave.clinicwaveusermanagementservice.service.VerificationCodeService;
+import com.clinicwave.clinicwaveusermanagementservice.util.NotificationUtil;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -197,17 +198,20 @@ public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
    * @param verificationLink the verification link to be sent in the notification
    */
   private void sendVerificationNotification(ClinicWaveUser clinicWaveUser, VerificationCode verificationCode, String verificationLink) {
+    VerificationCodeTypeEnum verificationCodeType = verificationCode.getType();
+    NotificationTypeEnum notificationType = NotificationUtil.getNotificationTypeForVerification(verificationCodeType);
+
     NotificationRequestDto notificationRequestDto = new NotificationRequestDto(
             clinicWaveUser.getEmail(),
-            "Verify Your Email",
-            "email-verification",
+            NotificationUtil.getSubjectForVerificationType(verificationCodeType),
+            NotificationUtil.getTemplateNameForVerificationType(verificationCodeType),
             Map.of(
                     "verificationCode", verificationCode.getCode(),
                     "userName", clinicWaveUser.getUsername(),
-                    "verificationType", verificationCode.getType().name(),
+                    "verificationType", verificationCodeType.name(),
                     "verificationLink", verificationLink
             ),
-            NotificationTypeEnum.EMAIL,
+            notificationType,
             NotificationCategoryEnum.VERIFICATION
     );
     notificationServiceClient.sendNotification(notificationRequestDto);
