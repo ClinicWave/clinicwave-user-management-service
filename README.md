@@ -63,6 +63,10 @@ to interact with the backend services.
     ```sh
     mvn spring-boot:run
     ```
+4. Testing the application:
+    ```sh
+    mvn test
+    ```
 
 ### API Endpoints
 
@@ -82,14 +86,6 @@ to interact with the backend services.
 ## Verification
 
 - Verify Email: `POST /api/verification/verify`
-
-### Testing
-
-- To run the tests, use the following command:
-
-   ```sh
-   mvn test
-   ```
 
 ### Contributing
 
