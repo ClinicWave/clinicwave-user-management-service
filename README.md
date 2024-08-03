@@ -70,7 +70,7 @@ to interact with the backend services.
 
 ### API Endpoints
 
-## User Management
+#### User Management
 
 - Get all users: `GET /api/users`
 - Get user by ID: `GET /api/users/{id}`
@@ -78,12 +78,12 @@ to interact with the backend services.
 - Update user: `PUT /api/users/{id}`
 - Delete user: `DELETE /api/users/{id}`
 
-## Role Assignment
+#### Role Assignment
 
 - Assign Role to User: `POST /api/users/{userId}/roles/{roleId}`
 - Remove Role from User: `DELETE /api/users/{userId}/roles/{roleId}`
 
-## Verification
+#### Verification
 
 - Verify Email: `POST /api/verification/verify`
 
