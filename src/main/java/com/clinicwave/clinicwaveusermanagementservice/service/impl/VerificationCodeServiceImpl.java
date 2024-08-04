@@ -97,21 +97,21 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
    *
    * @param verificationCode the verification code to be validated
    * @param submittedCode    the verification code submitted by the user
-   * @throws InvalidVerificationCodeException     if the submitted code is invalid
-   * @throws VerificationCodeAlreadyUsedException if the verification code has already been used
    * @throws VerificationCodeExpiredException     if the verification code has expired
+   * @throws VerificationCodeAlreadyUsedException if the verification code has already been used
+   * @throws InvalidVerificationCodeException     if the submitted code is invalid
    */
   private void validateVerificationCode(VerificationCode verificationCode, String submittedCode) {
-    if (!verificationCode.getCode().equals(submittedCode)) {
-      throw new InvalidVerificationCodeException(VERIFICATION_CODE, CODE, submittedCode);
+    if (verificationCode.getExpiryDate().isBefore(LocalDateTime.now())) {
+      throw new VerificationCodeExpiredException(VERIFICATION_CODE, CODE, submittedCode);
     }
 
     if (verificationCode.getIsUsed() || verificationCode.getIsVerified()) {
       throw new VerificationCodeAlreadyUsedException(VERIFICATION_CODE, CODE, submittedCode);
     }
 
-    if (verificationCode.getExpiryDate().isBefore(LocalDateTime.now())) {
-      throw new VerificationCodeExpiredException(VERIFICATION_CODE, CODE, submittedCode);
+    if (!verificationCode.getCode().equals(submittedCode)) {
+      throw new InvalidVerificationCodeException(VERIFICATION_CODE, CODE, submittedCode);
     }
   }
 
