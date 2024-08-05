@@ -10,6 +10,12 @@ import com.clinicwave.clinicwaveusermanagementservice.enums.VerificationCodeType
  */
 public class NotificationUtil {
   /**
+   * Private constructor to prevent instantiation.
+   */
+  private NotificationUtil() {
+  }
+
+  /**
    * This method returns the notification type for a given verification code type.
    *
    * @param verificationCodeType the verification code type
