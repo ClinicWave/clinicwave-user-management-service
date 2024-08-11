@@ -17,8 +17,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -60,6 +60,56 @@ class VerificationCodeControllerTest {
   @BeforeEach
   void setUp() {
     verificationRequestDto = new VerificationRequestDto("test@example.com", "123456");
+  }
+
+  @Test
+  @DisplayName("GET /api/verification/verify - User is verified")
+  void testCheckVerificationStatusWhenUserIsVerified() throws Exception {
+    when(verificationCodeService.checkVerificationStatus("testuser@example.com")).thenReturn(true);
+
+    mockMvc.perform(get(URL_TEMPLATE)
+                    .param("email", "testuser@example.com")
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.isVerified").value(true));
+  }
+
+  @Test
+  @DisplayName("GET /api/verification/verify - User is not verified")
+  void testCheckVerificationStatusWhenUserIsNotVerified() throws Exception {
+    when(verificationCodeService.checkVerificationStatus("testuser@example.com")).thenReturn(false);
+
+    mockMvc.perform(get(URL_TEMPLATE)
+                    .param("email", "testuser@example.com")
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.isVerified").value(false));
+  }
+
+  @Test
+  @DisplayName("GET /api/verification/verify - User not found")
+  void testCheckVerificationStatusWhenUserIsNotFound() throws Exception {
+    when(verificationCodeService.checkVerificationStatus("testuser@example.com"))
+            .thenThrow(new ResourceNotFoundException("ClinicWaveUser", "email", "testuser@example.com"));
+
+    mockMvc.perform(get(URL_TEMPLATE)
+                    .param("email", "testuser@example.com")
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.error").value("ClinicWaveUser with email: testuser@example.com not found"));
+  }
+
+  @Test
+  @DisplayName("GET /api/verification/verify - Unexpected exception")
+  void testCheckVerificationStatusWhenUnexpectedException() throws Exception {
+    when(verificationCodeService.checkVerificationStatus("testuser@example.com"))
+            .thenThrow(new RuntimeException("Unexpected error"));
+
+    mockMvc.perform(get(URL_TEMPLATE)
+                    .param("email", "testuser@example.com")
+                    .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value("Unexpected error"));
   }
 
   @Test
