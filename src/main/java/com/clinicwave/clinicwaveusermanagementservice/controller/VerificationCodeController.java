@@ -1,15 +1,14 @@
 package com.clinicwave.clinicwaveusermanagementservice.controller;
 
 import com.clinicwave.clinicwaveusermanagementservice.dto.VerificationRequestDto;
+import com.clinicwave.clinicwaveusermanagementservice.exception.ResourceNotFoundException;
 import com.clinicwave.clinicwaveusermanagementservice.service.VerificationCodeService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -24,6 +23,8 @@ import java.util.Map;
 public class VerificationCodeController {
   private final VerificationCodeService verificationCodeService;
 
+  private static final String ERROR = "error";
+
   /**
    * Constructs a new VerificationCodeController with the given VerificationCodeService.
    *
@@ -32,6 +33,24 @@ public class VerificationCodeController {
   @Autowired
   public VerificationCodeController(VerificationCodeService verificationCodeService) {
     this.verificationCodeService = verificationCodeService;
+  }
+
+  /**
+   * Checks the verification status for the specified email address.
+   *
+   * @param email the email address to check the verification status for
+   * @return the response entity containing the verification status
+   */
+  @GetMapping("/verify")
+  public ResponseEntity<Map<String, Object>> checkVerificationStatus(@RequestParam String email) {
+    try {
+      Boolean isVerified = verificationCodeService.checkVerificationStatus(email);
+      return ResponseEntity.ok(Map.of("isVerified", isVerified));
+    } catch (ResourceNotFoundException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(ERROR, e.getMessage()));
+    } catch (Exception e) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(ERROR, e.getMessage()));
+    }
   }
 
   /**
@@ -49,7 +68,7 @@ public class VerificationCodeController {
       return ResponseEntity.ok(Map.of("message", "Account verified successfully!"));
     } catch (Exception e) {
       log.error("Error verifying account: {}", e.getMessage());
-      return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+      return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
     }
   }
 }
