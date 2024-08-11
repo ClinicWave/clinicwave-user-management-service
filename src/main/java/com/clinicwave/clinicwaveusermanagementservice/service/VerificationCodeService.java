@@ -15,5 +15,7 @@ import com.clinicwave.clinicwaveusermanagementservice.enums.VerificationCodeType
 public interface VerificationCodeService {
   VerificationCode getVerificationCode(ClinicWaveUser clinicWaveUser, VerificationCodeTypeEnum verificationCodeType);
 
+  Boolean checkVerificationStatus(String email);
+
   void verifyAccount(VerificationRequestDto verificationRequestDto);
 }

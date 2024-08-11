@@ -67,6 +67,20 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
   }
 
   /**
+   * Checks the verification status for the specified email address.
+   *
+   * @param email the email address to check the verification status for
+   * @return the verification status for the specified email address
+   */
+  @Override
+  public Boolean checkVerificationStatus(String email) {
+    ClinicWaveUser clinicWaveUser = findClinicWaveUserByEmail(email);
+    Boolean isVerified = clinicWaveUser.getStatus() == UserStatusEnum.VERIFIED;
+    log.info("Verification status for user {} is: {}", clinicWaveUser.getUsername(), isVerified);
+    return isVerified;
+  }
+
+  /**
    * Verifies the account of the user with the specified email using the verification code provided in the request.
    *
    * @param verificationRequestDto the verification request containing the email and verification code

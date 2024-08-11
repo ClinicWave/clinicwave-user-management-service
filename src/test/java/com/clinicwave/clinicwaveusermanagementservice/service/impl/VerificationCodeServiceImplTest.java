@@ -115,6 +115,42 @@ class VerificationCodeServiceImplTest {
   }
 
   @Test
+  @DisplayName("Test checkVerificationStatus when user is verified")
+  void testCheckVerificationStatusWhenUserIsVerified() {
+    user.setStatus(UserStatusEnum.VERIFIED);
+    when(clinicWaveUserRepository.findByEmail("testuser@example.com")).thenReturn(Optional.of(user));
+
+    Boolean isVerified = verificationCodeService.checkVerificationStatus("testuser@example.com");
+
+    assertTrue(isVerified);
+    verify(clinicWaveUserRepository, times(1)).findByEmail("testuser@example.com");
+  }
+
+  @Test
+  @DisplayName("Test checkVerificationStatus when user is not verified")
+  void testCheckVerificationStatusWhenUserIsNotVerified() {
+    user.setStatus(UserStatusEnum.PENDING);
+    when(clinicWaveUserRepository.findByEmail("testuser@example.com")).thenReturn(Optional.of(user));
+
+    Boolean isVerified = verificationCodeService.checkVerificationStatus("testuser@example.com");
+
+    assertFalse(isVerified);
+    verify(clinicWaveUserRepository, times(1)).findByEmail("testuser@example.com");
+  }
+
+  @Test
+  @DisplayName("Test checkVerificationStatus when user is not found")
+  void testCheckVerificationStatusWhenUserIsNotFound() {
+    when(clinicWaveUserRepository.findByEmail("testuser@example.com")).thenReturn(Optional.empty());
+
+    assertThrows(ResourceNotFoundException.class, () -> {
+      verificationCodeService.checkVerificationStatus("testuser@example.com");
+    });
+
+    verify(clinicWaveUserRepository, times(1)).findByEmail("testuser@example.com");
+  }
+
+  @Test
   @DisplayName("verifyAccount returns VerificationRequestDto when verification is successful")
   void verifyAccountReturnsVerificationRequestDtoWhenVerificationIsSuccessful() {
     VerificationRequestDto verificationRequestDto = new VerificationRequestDto("testuser@example.com", "123456");
