@@ -1,12 +1,10 @@
 package com.clinicwave.clinicwaveusermanagementservice.controller;
 
 import com.clinicwave.clinicwaveusermanagementservice.dto.VerificationRequestDto;
-import com.clinicwave.clinicwaveusermanagementservice.exception.ResourceNotFoundException;
 import com.clinicwave.clinicwaveusermanagementservice.service.VerificationCodeService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +21,6 @@ import java.util.Map;
 public class VerificationCodeController {
   private final VerificationCodeService verificationCodeService;
 
-  private static final String ERROR = "error";
-
   /**
    * Constructs a new VerificationCodeController with the given VerificationCodeService.
    *
@@ -40,17 +36,13 @@ public class VerificationCodeController {
    *
    * @param email the email address to check the verification status for
    * @return the response entity containing the verification status
+   * Throws exception which is handled by the GlobalExceptionHandler:
+   * - ResourceNotFoundException if the user is not found
    */
   @GetMapping("/verify")
   public ResponseEntity<Map<String, Object>> checkVerificationStatus(@RequestParam String email) {
-    try {
-      Boolean isVerified = verificationCodeService.checkVerificationStatus(email);
-      return ResponseEntity.ok(Map.of("isVerified", isVerified));
-    } catch (ResourceNotFoundException e) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(ERROR, e.getMessage()));
-    } catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(ERROR, e.getMessage()));
-    }
+    Boolean isVerified = verificationCodeService.checkVerificationStatus(email);
+    return ResponseEntity.ok(Map.of("isVerified", isVerified));
   }
 
   /**
@@ -58,17 +50,17 @@ public class VerificationCodeController {
    *
    * @param verificationRequestDto the verification request data transfer object
    * @return the response entity containing the result of the verification
+   * Throws Various exceptions which are handled by the GlobalExceptionHandler:
+   * - ResourceNotFoundException if the user is not found
+   * - VerificationCodeExpiredException if the code has expired
+   * - VerificationCodeAlreadyUsedException if the code was already used
+   * - InvalidVerificationCodeException if the code is incorrect
    */
   @PostMapping("/verify")
   public ResponseEntity<Map<String, String>> verifyAccount(@Valid @RequestBody VerificationRequestDto verificationRequestDto) {
     log.info("Verifying account for email: {}", verificationRequestDto.email());
-    try {
-      verificationCodeService.verifyAccount(verificationRequestDto);
-      log.info("Account verified successfully!");
-      return ResponseEntity.ok(Map.of("message", "Account verified successfully!"));
-    } catch (Exception e) {
-      log.error("Error verifying account: {}", e.getMessage());
-      return ResponseEntity.badRequest().body(Map.of(ERROR, e.getMessage()));
-    }
+    verificationCodeService.verifyAccount(verificationRequestDto);
+    log.info("Account verified successfully!");
+    return ResponseEntity.ok(Map.of("message", "Account verified successfully!"));
   }
 }
