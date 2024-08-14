@@ -96,7 +96,7 @@ class VerificationCodeControllerTest {
                     .param("email", "testuser@example.com")
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(jsonPath("$.error").value("ClinicWaveUser with email: testuser@example.com not found"));
+            .andExpect(jsonPath("$.errorMessage").value("ClinicWaveUser with email: testuser@example.com not found"));
   }
 
   @Test
@@ -108,8 +108,8 @@ class VerificationCodeControllerTest {
     mockMvc.perform(get(URL_TEMPLATE)
                     .param("email", "testuser@example.com")
                     .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.error").value("Unexpected error"));
+            .andExpect(status().isInternalServerError())
+            .andExpect(jsonPath("$.errorMessage").value("Unexpected error"));
   }
 
   @Test
@@ -138,7 +138,7 @@ class VerificationCodeControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(verificationRequestDto)))
             .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.error").value(String.format("VerificationCode with code %s is invalid", verificationRequestDto.code())));
+            .andExpect(jsonPath("$.errorMessage").value(String.format("VerificationCode with code %s is invalid", verificationRequestDto.code())));
   }
 
   @Test
@@ -152,8 +152,8 @@ class VerificationCodeControllerTest {
     mockMvc.perform(post(URL_TEMPLATE)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(verificationRequestDto)))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.error").value(String.format("VerificationCode with code %s has already been used", verificationRequestDto.code())));
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.errorMessage").value(String.format("VerificationCode with code %s has already been used", verificationRequestDto.code())));
   }
 
   @Test
@@ -167,8 +167,8 @@ class VerificationCodeControllerTest {
     mockMvc.perform(post(URL_TEMPLATE)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(verificationRequestDto)))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.error").value(String.format("VerificationCode with code %s has expired", verificationRequestDto.code())));
+            .andExpect(status().isGone())
+            .andExpect(jsonPath("$.errorMessage").value(String.format("VerificationCode with code %s has expired", verificationRequestDto.code())));
   }
 
   @Test
@@ -182,7 +182,7 @@ class VerificationCodeControllerTest {
     mockMvc.perform(post(URL_TEMPLATE)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(verificationRequestDto)))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.error").value(String.format("ClinicWaveUser with email: %s not found", verificationRequestDto.email())));
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.errorMessage").value(String.format("ClinicWaveUser with email: %s not found", verificationRequestDto.email())));
   }
 }
