@@ -17,5 +17,7 @@ import java.util.Optional;
 public interface VerificationCodeRepository extends JpaRepository<VerificationCode, Long> {
   List<VerificationCode> findAllByClinicWaveUser(ClinicWaveUser clinicWaveUser);
 
+  Optional<VerificationCode> findByToken(String token);
+
   Optional<VerificationCode> findTopByClinicWaveUserAndTypeOrderByCreatedAtDesc(ClinicWaveUser clinicWaveUser, VerificationCodeTypeEnum type);
 }

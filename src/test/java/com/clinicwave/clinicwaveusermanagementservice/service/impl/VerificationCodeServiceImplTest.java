@@ -3,6 +3,7 @@ package com.clinicwave.clinicwaveusermanagementservice.service.impl;
 import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
 import com.clinicwave.clinicwaveusermanagementservice.domain.VerificationCode;
 import com.clinicwave.clinicwaveusermanagementservice.dto.VerificationRequestDto;
+import com.clinicwave.clinicwaveusermanagementservice.dto.VerificationStatusDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;
 import com.clinicwave.clinicwaveusermanagementservice.enums.UserStatusEnum;
 import com.clinicwave.clinicwaveusermanagementservice.enums.VerificationCodeTypeEnum;
@@ -47,6 +48,7 @@ class VerificationCodeServiceImplTest {
 
   private ClinicWaveUser user;
   private VerificationCode verificationCode;
+  private static final String TOKEN = "91cd894d-7c2b-41d8-92cf-7ecb17b931ea";
 
   /**
    * Sets up the test environment before each test.
@@ -66,6 +68,7 @@ class VerificationCodeServiceImplTest {
     verificationCode = new VerificationCode();
     verificationCode.setCode("123456");
     verificationCode.setType(VerificationCodeTypeEnum.PASSWORD_RESET);
+    verificationCode.setToken(TOKEN);
     verificationCode.setClinicWaveUser(user);
   }
 
@@ -81,6 +84,7 @@ class VerificationCodeServiceImplTest {
     assertEquals(6, actualVerificationCode.getCode().length());
     assertTrue(actualVerificationCode.getCode().matches("\\d+"));
     assertEquals(VerificationCodeTypeEnum.EMAIL_VERIFICATION, actualVerificationCode.getType());
+    assertNotNull(actualVerificationCode.getToken());
     assertEquals(user, actualVerificationCode.getClinicWaveUser());
 
     verify(verificationCodeRepository, times(1)).save(any(VerificationCode.class));
@@ -118,36 +122,38 @@ class VerificationCodeServiceImplTest {
   @DisplayName("Test checkVerificationStatus when user is verified")
   void testCheckVerificationStatusWhenUserIsVerified() {
     user.setStatus(UserStatusEnum.VERIFIED);
-    when(clinicWaveUserRepository.findByEmail("testuser@example.com")).thenReturn(Optional.of(user));
+    when(verificationCodeRepository.findByToken(TOKEN)).thenReturn(Optional.of(verificationCode));
 
-    Boolean isVerified = verificationCodeService.checkVerificationStatus("testuser@example.com");
+    VerificationStatusDto verificationStatusDto = verificationCodeService.checkVerificationStatus(TOKEN);
 
-    assertTrue(isVerified);
-    verify(clinicWaveUserRepository, times(1)).findByEmail("testuser@example.com");
+    assertTrue(verificationStatusDto.isVerified());
+    assertEquals("testuser@example.com", verificationStatusDto.email());
+    verify(verificationCodeRepository, times(1)).findByToken(TOKEN);
   }
 
   @Test
   @DisplayName("Test checkVerificationStatus when user is not verified")
   void testCheckVerificationStatusWhenUserIsNotVerified() {
     user.setStatus(UserStatusEnum.PENDING);
-    when(clinicWaveUserRepository.findByEmail("testuser@example.com")).thenReturn(Optional.of(user));
+    when(verificationCodeRepository.findByToken(TOKEN)).thenReturn(Optional.of(verificationCode));
 
-    Boolean isVerified = verificationCodeService.checkVerificationStatus("testuser@example.com");
+    VerificationStatusDto verificationStatusDto = verificationCodeService.checkVerificationStatus(TOKEN);
 
-    assertFalse(isVerified);
-    verify(clinicWaveUserRepository, times(1)).findByEmail("testuser@example.com");
+    assertFalse(verificationStatusDto.isVerified());
+    assertEquals("testuser@example.com", verificationStatusDto.email());
+    verify(verificationCodeRepository, times(1)).findByToken(TOKEN);
   }
 
   @Test
-  @DisplayName("Test checkVerificationStatus when user is not found")
-  void testCheckVerificationStatusWhenUserIsNotFound() {
-    when(clinicWaveUserRepository.findByEmail("testuser@example.com")).thenReturn(Optional.empty());
+  @DisplayName("Test checkVerificationStatus when token is not found")
+  void testCheckVerificationStatusWhenTokenIsNotFound() {
+    when(verificationCodeRepository.findByToken(TOKEN)).thenReturn(Optional.empty());
 
     assertThrows(ResourceNotFoundException.class, () -> {
-      verificationCodeService.checkVerificationStatus("testuser@example.com");
+      verificationCodeService.checkVerificationStatus(TOKEN);
     });
 
-    verify(clinicWaveUserRepository, times(1)).findByEmail("testuser@example.com");
+    verify(verificationCodeRepository, times(1)).findByToken(TOKEN);
   }
 
   @Test
