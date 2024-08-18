@@ -49,6 +49,9 @@ public class VerificationCode extends Audit {
   @Column(nullable = false)
   private VerificationCodeTypeEnum type;
 
+  @Column(nullable = false, unique = true)
+  private String token;
+
   @ManyToOne
   @JoinColumn(nullable = false)
   @OnDelete(action = OnDeleteAction.CASCADE)

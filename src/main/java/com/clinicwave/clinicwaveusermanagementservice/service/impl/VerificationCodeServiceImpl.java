@@ -3,6 +3,7 @@ package com.clinicwave.clinicwaveusermanagementservice.service.impl;
 import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
 import com.clinicwave.clinicwaveusermanagementservice.domain.VerificationCode;
 import com.clinicwave.clinicwaveusermanagementservice.dto.VerificationRequestDto;
+import com.clinicwave.clinicwaveusermanagementservice.dto.VerificationStatusDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.UserStatusEnum;
 import com.clinicwave.clinicwaveusermanagementservice.enums.VerificationCodeTypeEnum;
 import com.clinicwave.clinicwaveusermanagementservice.exception.InvalidVerificationCodeException;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * This class implements the VerificationCodeService interface and provides methods to generate verification codes for users.
@@ -34,6 +36,7 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
   private static final String CLINIC_WAVE_USER = "clinicWaveUser";
   private static final String CLINIC_WAVE_USER_AND_TYPE = "clinicWaveUser and type";
   private static final String EMAIL = "email";
+  private static final String TOKEN = "token";
 
   private final VerificationCodeRepository verificationCodeRepository;
   private final ClinicWaveUserRepository clinicWaveUserRepository;
@@ -62,22 +65,33 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
     VerificationCode verificationCode = new VerificationCode();
     verificationCode.setCode(generateRandomCode());
     verificationCode.setType(verificationCodeType);
+    verificationCode.setToken(generateUniqueToken());
     verificationCode.setClinicWaveUser(clinicWaveUser);
     return verificationCodeRepository.save(verificationCode);
   }
 
   /**
-   * Checks the verification status for the specified email address.
+   * Generates a unique token for the verification code.
    *
-   * @param email the email address to check the verification status for
-   * @return the verification status for the specified email address
+   * @return the generated unique token
+   */
+  private String generateUniqueToken() {
+    return UUID.randomUUID().toString();
+  }
+
+  /**
+   * Checks the verification status for the specified token.
+   *
+   * @param token the token to check the verification status for
+   * @return VerificationStatusDto containing the verification status and email
    */
   @Override
-  public Boolean checkVerificationStatus(String email) {
-    ClinicWaveUser clinicWaveUser = findClinicWaveUserByEmail(email);
+  public VerificationStatusDto checkVerificationStatus(String token) {
+    VerificationCode verificationCode = findVerificationCodeByToken(token);
+    ClinicWaveUser clinicWaveUser = verificationCode.getClinicWaveUser();
     Boolean isVerified = clinicWaveUser.getStatus() == UserStatusEnum.VERIFIED;
     log.info("Verification status for user {} is: {}", clinicWaveUser.getUsername(), isVerified);
-    return isVerified;
+    return new VerificationStatusDto(isVerified, clinicWaveUser.getEmail());
   }
 
   /**
@@ -165,6 +179,20 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
             .orElseThrow(() -> new ResourceNotFoundException(
                     VERIFICATION_CODE,
                     CLINIC_WAVE_USER_AND_TYPE, clinicWaveUser.getUsername() + " and " + type)
+            );
+  }
+
+  /**
+   * Finds the verification code with the specified token.
+   *
+   * @param token the token of the verification code to be found
+   * @return the verification code with the specified token
+   * @throws ResourceNotFoundException if the verification code with the specified token is not found
+   */
+  private VerificationCode findVerificationCodeByToken(String token) {
+    return verificationCodeRepository.findByToken(token)
+            .orElseThrow(() -> new ResourceNotFoundException(
+                    VERIFICATION_CODE, TOKEN, token)
             );
   }
 

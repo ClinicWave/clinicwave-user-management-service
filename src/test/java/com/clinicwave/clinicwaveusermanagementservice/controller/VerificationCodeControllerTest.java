@@ -1,6 +1,7 @@
 package com.clinicwave.clinicwaveusermanagementservice.controller;
 
 import com.clinicwave.clinicwaveusermanagementservice.dto.VerificationRequestDto;
+import com.clinicwave.clinicwaveusermanagementservice.dto.VerificationStatusDto;
 import com.clinicwave.clinicwaveusermanagementservice.exception.InvalidVerificationCodeException;
 import com.clinicwave.clinicwaveusermanagementservice.exception.ResourceNotFoundException;
 import com.clinicwave.clinicwaveusermanagementservice.exception.VerificationCodeAlreadyUsedException;
@@ -40,7 +41,11 @@ class VerificationCodeControllerTest {
 
   private VerificationRequestDto verificationRequestDto;
 
+  private VerificationStatusDto verificationStatusDto;
+
   private static final String URL_TEMPLATE = "/api/verification/verify";
+  public static final String EMAIL = "test@example.com";
+  private static final String TOKEN = "91cd894d-7c2b-41d8-92cf-7ecb17b931ea";
 
   /**
    * Constructs a new VerificationCodeControllerTest with the given MockMvc and ObjectMapper.
@@ -59,54 +64,60 @@ class VerificationCodeControllerTest {
    */
   @BeforeEach
   void setUp() {
-    verificationRequestDto = new VerificationRequestDto("test@example.com", "123456");
+    verificationRequestDto = new VerificationRequestDto(EMAIL, "123456");
   }
 
   @Test
   @DisplayName("GET /api/verification/verify - User is verified")
   void testCheckVerificationStatusWhenUserIsVerified() throws Exception {
-    when(verificationCodeService.checkVerificationStatus("testuser@example.com")).thenReturn(true);
+    verificationStatusDto = new VerificationStatusDto(true, EMAIL);
+
+    when(verificationCodeService.checkVerificationStatus(TOKEN)).thenReturn(verificationStatusDto);
 
     mockMvc.perform(get(URL_TEMPLATE)
-                    .param("email", "testuser@example.com")
+                    .param("token", TOKEN)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.isVerified").value(true));
+            .andExpect(jsonPath("$.isVerified").value(true))
+            .andExpect(jsonPath("$.email").value(EMAIL));
   }
 
   @Test
   @DisplayName("GET /api/verification/verify - User is not verified")
   void testCheckVerificationStatusWhenUserIsNotVerified() throws Exception {
-    when(verificationCodeService.checkVerificationStatus("testuser@example.com")).thenReturn(false);
+    verificationStatusDto = new VerificationStatusDto(false, EMAIL);
+
+    when(verificationCodeService.checkVerificationStatus(TOKEN)).thenReturn(verificationStatusDto);
 
     mockMvc.perform(get(URL_TEMPLATE)
-                    .param("email", "testuser@example.com")
+                    .param("token", TOKEN)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.isVerified").value(false));
+            .andExpect(jsonPath("$.isVerified").value(false))
+            .andExpect(jsonPath("$.email").value(EMAIL));
   }
 
   @Test
   @DisplayName("GET /api/verification/verify - User not found")
   void testCheckVerificationStatusWhenUserIsNotFound() throws Exception {
-    when(verificationCodeService.checkVerificationStatus("testuser@example.com"))
-            .thenThrow(new ResourceNotFoundException("ClinicWaveUser", "email", "testuser@example.com"));
+    when(verificationCodeService.checkVerificationStatus(TOKEN))
+            .thenThrow(new ResourceNotFoundException("VerificationCode", "token", TOKEN));
 
     mockMvc.perform(get(URL_TEMPLATE)
-                    .param("email", "testuser@example.com")
+                    .param("token", TOKEN)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
-            .andExpect(jsonPath("$.errorMessage").value("ClinicWaveUser with email: testuser@example.com not found"));
+            .andExpect(jsonPath("$.errorMessage").value(String.format("VerificationCode with token: %s not found", TOKEN)));
   }
 
   @Test
   @DisplayName("GET /api/verification/verify - Unexpected exception")
   void testCheckVerificationStatusWhenUnexpectedException() throws Exception {
-    when(verificationCodeService.checkVerificationStatus("testuser@example.com"))
+    when(verificationCodeService.checkVerificationStatus(TOKEN))
             .thenThrow(new RuntimeException("Unexpected error"));
 
     mockMvc.perform(get(URL_TEMPLATE)
-                    .param("email", "testuser@example.com")
+                    .param("token", TOKEN)
                     .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isInternalServerError())
             .andExpect(jsonPath("$.errorMessage").value("Unexpected error"));

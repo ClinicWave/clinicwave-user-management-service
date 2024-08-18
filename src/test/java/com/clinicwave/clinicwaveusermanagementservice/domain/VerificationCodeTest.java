@@ -63,6 +63,7 @@ class VerificationCodeTest {
     verificationCode = new VerificationCode();
     verificationCode.setCode("123456");
     verificationCode.setType(VerificationCodeTypeEnum.EMAIL_VERIFICATION);
+    verificationCode.setToken("123456");
     verificationCode.setClinicWaveUser(user);
   }
 
@@ -91,6 +92,7 @@ class VerificationCodeTest {
     assertNotNull(savedVerificationCode);
     assertEquals(verificationCode.getCode(), savedVerificationCode.getCode());
     assertEquals(verificationCode.getType(), savedVerificationCode.getType());
+    assertEquals(verificationCode.getToken(), savedVerificationCode.getToken());
     assertEquals(verificationCode.getClinicWaveUser().getId(), savedVerificationCode.getClinicWaveUser().getId());
   }
 
@@ -110,6 +112,7 @@ class VerificationCodeTest {
     VerificationCode anotherCode = new VerificationCode();
     anotherCode.setCode("654321");
     anotherCode.setType(VerificationCodeTypeEnum.PASSWORD_RESET);
+    anotherCode.setToken("654321");
     anotherCode.setClinicWaveUser(user);
     verificationCodeRepository.save(anotherCode);
 
