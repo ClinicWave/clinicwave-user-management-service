@@ -24,8 +24,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -126,9 +124,12 @@ class ClinicWaveUserServiceImplTest {
   @Test
   @DisplayName("createUser returns created ClinicWaveUser")
   void createUser_returnsCreatedClinicWaveUserDto() {
+    String token = "91cd894d-7c2b-41d8-92cf-7ecb17b931ea";
+
     VerificationCode verificationCode = new VerificationCode();
     verificationCode.setCode("123456");
     verificationCode.setType(VerificationCodeTypeEnum.EMAIL_VERIFICATION);
+    verificationCode.setToken(token);
     verificationCode.setClinicWaveUser(clinicWaveUser);
 
     when(clinicWaveUserMapper.toEntity(clinicWaveUserDto)).thenReturn(clinicWaveUser);
@@ -153,8 +154,7 @@ class ClinicWaveUserServiceImplTest {
     ArgumentCaptor<NotificationRequestDto> notificationCaptor = ArgumentCaptor.forClass(NotificationRequestDto.class);
     verify(notificationServiceClient, times(1)).sendNotification(notificationCaptor.capture());
 
-    String encodedEmail = URLEncoder.encode(clinicWaveUser.getEmail(), StandardCharsets.UTF_8);
-    String expectedVerificationLink = "http://localhost:5173/verification/verify?email=" + encodedEmail;
+    String expectedVerificationLink = "http://localhost:5173/verification/verify?token=" + token;
 
     // Verify notification details
     NotificationRequestDto capturedNotification = notificationCaptor.getValue();

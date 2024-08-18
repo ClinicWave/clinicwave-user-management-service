@@ -22,8 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -96,7 +94,7 @@ public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
     VerificationCode verificationCode = generateVerificationCode(savedClinicWaveUser);
 
     // Generate a verification link for the user
-    String verificationLink = generateVerificationLink(clinicWaveUser.getEmail());
+    String verificationLink = generateVerificationLink(verificationCode.getToken());
 
     // Send a notification to the user with the verification code
     sendVerificationNotification(savedClinicWaveUser, verificationCode, verificationLink);
@@ -179,15 +177,14 @@ public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
   }
 
   /**
-   * Generates a verification link for the user based on their email.
+   * Generates a verification link for the user based on the specified token.
    * clinicwaveUserManagementFrontendBaseUrl is the base URL of the ClinicWave User Management frontend application.
-   * The email is encoded using UTF-8 to ensure that special characters are handled correctly.
    *
-   * @param email the email of the user for whom the verification link is to be generated
+   * @param token the token to be used in the verification link
    * @return the generated verification link
    */
-  private String generateVerificationLink(String email) {
-    return clinicwaveUserManagementFrontendBaseUrl + "/verification/verify?email=" + URLEncoder.encode(email, StandardCharsets.UTF_8);
+  private String generateVerificationLink(String token) {
+    return clinicwaveUserManagementFrontendBaseUrl + "/verification/verify?token=" + token;
   }
 
   /**
