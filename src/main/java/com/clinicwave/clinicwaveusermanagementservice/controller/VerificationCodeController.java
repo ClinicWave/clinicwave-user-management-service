@@ -1,6 +1,7 @@
 package com.clinicwave.clinicwaveusermanagementservice.controller;
 
 import com.clinicwave.clinicwaveusermanagementservice.dto.VerificationRequestDto;
+import com.clinicwave.clinicwaveusermanagementservice.dto.VerificationStatusDto;
 import com.clinicwave.clinicwaveusermanagementservice.service.VerificationCodeService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -32,17 +33,17 @@ public class VerificationCodeController {
   }
 
   /**
-   * Checks the verification status for the specified email address.
+   * Checks the verification status for the specified token.
    *
-   * @param email the email address to check the verification status for
-   * @return the response entity containing the verification status
+   * @param token the token to check the verification status for
+   * @return the response entity containing the VerificationStatusDto object
    * Throws exception which is handled by the GlobalExceptionHandler:
    * - ResourceNotFoundException if the user is not found
    */
   @GetMapping("/verify")
-  public ResponseEntity<Map<String, Object>> checkVerificationStatus(@RequestParam String email) {
-    Boolean isVerified = verificationCodeService.checkVerificationStatus(email);
-    return ResponseEntity.ok(Map.of("isVerified", isVerified));
+  public ResponseEntity<VerificationStatusDto> checkVerificationStatus(@RequestParam String token) {
+    VerificationStatusDto verificationStatusDto = verificationCodeService.checkVerificationStatus(token);
+    return ResponseEntity.ok(verificationStatusDto);
   }
 
   /**
