@@ -1,6 +1,5 @@
 package com.clinicwave.clinicwaveusermanagementservice.service.impl;
 
-import com.clinicwave.clinicwaveusermanagementservice.client.NotificationServiceClient;
 import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
 import com.clinicwave.clinicwaveusermanagementservice.domain.Role;
 import com.clinicwave.clinicwaveusermanagementservice.domain.UserType;
@@ -20,6 +19,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,29 +41,30 @@ public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
   private final UserTypeRepository userTypeRepository;
   private final ClinicWaveUserMapper clinicWaveUserMapper;
   private final VerificationCodeService verificationCodeService;
-  private final NotificationServiceClient notificationServiceClient;
+  private final KafkaTemplate<String, NotificationRequestDto> kafkaTemplate;
 
   @Value("${clinicwave-user-management-frontend-base-url}")
   private String clinicwaveUserManagementFrontendBaseUrl;
+  private static final String TOPIC_NAME = "notification-topic";
 
   /**
    * Constructor for the ClinicWaveUserServiceImpl class.
    *
-   * @param clinicWaveUserRepository  the ClinicWaveUserRepository to be used for database operations
-   * @param roleRepository            the RoleRepository to be used for database operations
-   * @param userTypeRepository        the UserTypeRepository to be used for database operations
-   * @param clinicWaveUserMapper      the ClinicWaveUserMapper to be used for object mapping
-   * @param verificationCodeService   the VerificationCodeService to be used for generating verification codes
-   * @param notificationServiceClient the NotificationServiceClient to be used for sending notifications
+   * @param clinicWaveUserRepository the ClinicWaveUserRepository to be used for database operations
+   * @param roleRepository           the RoleRepository to be used for database operations
+   * @param userTypeRepository       the UserTypeRepository to be used for database operations
+   * @param clinicWaveUserMapper     the ClinicWaveUserMapper to be used for object mapping
+   * @param verificationCodeService  the VerificationCodeService to be used for generating verification codes
+   * @param kafkaTemplate            the KafkaTemplate to be used for sending notifications
    */
   @Autowired
-  public ClinicWaveUserServiceImpl(ClinicWaveUserRepository clinicWaveUserRepository, RoleRepository roleRepository, UserTypeRepository userTypeRepository, ClinicWaveUserMapper clinicWaveUserMapper, VerificationCodeService verificationCodeService, NotificationServiceClient notificationServiceClient) {
+  public ClinicWaveUserServiceImpl(ClinicWaveUserRepository clinicWaveUserRepository, RoleRepository roleRepository, UserTypeRepository userTypeRepository, ClinicWaveUserMapper clinicWaveUserMapper, VerificationCodeService verificationCodeService, KafkaTemplate<String, NotificationRequestDto> kafkaTemplate) {
     this.clinicWaveUserRepository = clinicWaveUserRepository;
     this.roleRepository = roleRepository;
     this.userTypeRepository = userTypeRepository;
     this.clinicWaveUserMapper = clinicWaveUserMapper;
     this.verificationCodeService = verificationCodeService;
-    this.notificationServiceClient = notificationServiceClient;
+    this.kafkaTemplate = kafkaTemplate;
   }
 
   /**
@@ -211,7 +212,7 @@ public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
             notificationType,
             NotificationCategoryEnum.VERIFICATION
     );
-    notificationServiceClient.sendNotification(notificationRequestDto);
+    kafkaTemplate.send(TOPIC_NAME, notificationRequestDto);
   }
 
   /**

@@ -1,7 +1,8 @@
 package com.clinicwave.clinicwaveusermanagementservice.controller.integration.testcontainers;
 
-import com.clinicwave.clinicwaveusermanagementservice.config.NotificationServiceClientMockConfig;
+import com.clinicwave.clinicwaveusermanagementservice.config.KafkaTemplateMockConfig;
 import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserDto;
+import com.clinicwave.clinicwaveusermanagementservice.dto.NotificationRequestDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;
 import com.clinicwave.clinicwaveusermanagementservice.repository.ClinicWaveUserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,18 +16,25 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
 
 /**
  * This class provides integration tests for the ClinicWaveUserController class.
@@ -40,9 +48,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * The tests use the DynamicPropertySource annotation to set the datasource properties for the test.
  * The tests use the ClinicWaveUserRepository to interact with the database.
  */
-@ActiveProfiles("local")
+@ActiveProfiles("docker")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Import(NotificationServiceClientMockConfig.class)
+@Import(KafkaTemplateMockConfig.class)
 @Testcontainers
 class ClinicWaveUserControllerTestContainersIntegrationTest {
   // Define a PostgreSQL container for the test
@@ -52,9 +60,15 @@ class ClinicWaveUserControllerTestContainersIntegrationTest {
           .withUsername("root")
           .withPassword("root");
 
+  // Define a Kafka container for the test
+  @Container
+  static KafkaContainer kafkaContainer = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:latest"));
+
   private final TestRestTemplate restTemplate;
 
   private final ClinicWaveUserRepository clinicWaveUserRepository;
+
+  private final KafkaTemplate<String, NotificationRequestDto> kafkaTemplate;
 
   private ClinicWaveUserDto createdClinicWaveUserDto;
   private ClinicWaveUserDto createdClinicWaveUserDto2;
@@ -65,6 +79,7 @@ class ClinicWaveUserControllerTestContainersIntegrationTest {
     registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
     registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
     registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
+    registry.add("spring.kafka.bootstrap-servers", kafkaContainer::getBootstrapServers);
   }
 
   /**
@@ -74,9 +89,10 @@ class ClinicWaveUserControllerTestContainersIntegrationTest {
    * @param clinicWaveUserRepository the ClinicWaveUserRepository instance to use for testing
    */
   @Autowired
-  public ClinicWaveUserControllerTestContainersIntegrationTest(TestRestTemplate restTemplate, ClinicWaveUserRepository clinicWaveUserRepository) {
+  public ClinicWaveUserControllerTestContainersIntegrationTest(TestRestTemplate restTemplate, ClinicWaveUserRepository clinicWaveUserRepository, KafkaTemplate<String, NotificationRequestDto> kafkaTemplate) {
     this.restTemplate = restTemplate;
     this.clinicWaveUserRepository = clinicWaveUserRepository;
+    this.kafkaTemplate = kafkaTemplate;
   }
 
   /**
@@ -104,6 +120,9 @@ class ClinicWaveUserControllerTestContainersIntegrationTest {
     ClinicWaveUserDto createdUser = createResponse.getBody();
     assertNotNull(createdUser);
     assertNotNull(createdUser.id());
+
+    // Verify that the KafkaTemplate send method was called
+    verify(kafkaTemplate, atLeastOnce()).send(eq("notification-topic"), any(NotificationRequestDto.class));
 
     // Get user
     ResponseEntity<ClinicWaveUserDto> getResponse = restTemplate.getForEntity("/api/users/" + createdUser.id(), ClinicWaveUserDto.class);
