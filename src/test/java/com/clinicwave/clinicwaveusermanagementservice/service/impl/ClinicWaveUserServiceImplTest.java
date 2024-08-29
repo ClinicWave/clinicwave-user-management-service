@@ -1,6 +1,5 @@
 package com.clinicwave.clinicwaveusermanagementservice.service.impl;
 
-import com.clinicwave.clinicwaveusermanagementservice.client.NotificationServiceClient;
 import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
 import com.clinicwave.clinicwaveusermanagementservice.domain.Role;
 import com.clinicwave.clinicwaveusermanagementservice.domain.UserType;
@@ -22,6 +21,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
@@ -58,7 +58,7 @@ class ClinicWaveUserServiceImplTest {
   private VerificationCodeService verificationCodeService;
 
   @Mock
-  private NotificationServiceClient notificationServiceClient;
+  private KafkaTemplate<String, NotificationRequestDto> kafkaTemplate;
 
   @InjectMocks
   private ClinicWaveUserServiceImpl clinicWaveUserService;
@@ -152,7 +152,7 @@ class ClinicWaveUserServiceImplTest {
 
     // Verify notification was sent and capture the argument
     ArgumentCaptor<NotificationRequestDto> notificationCaptor = ArgumentCaptor.forClass(NotificationRequestDto.class);
-    verify(notificationServiceClient, times(1)).sendNotification(notificationCaptor.capture());
+    verify(kafkaTemplate, times(1)).send(eq("notification-topic"), notificationCaptor.capture());
 
     String expectedVerificationLink = "http://localhost:5173/verification/verify?token=" + token;
 
