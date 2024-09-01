@@ -14,7 +14,7 @@ secure and efficient way to handle user interactions.
 - Permission creation
 - Permission assignment to roles
 - Role assignment to users
-- Sending notifications to the notification service (e.g., email verification upon registration with a link and code)
+- Sending notifications to the notification service using Kafka
 - CORS configuration for frontend integration
 - RESTful API endpoints
 
@@ -45,6 +45,7 @@ to interact with the backend services.
 
 ### Prerequisites
 
+- Docker
 - Java 17 or higher
 - Maven 3.6.0 or higher
 
@@ -55,15 +56,21 @@ to interact with the backend services.
    git clone https://github.com/ClinicWave/clinicwave-user-management-service.git
    cd clinicwave-user-management-service
     ```
-2. Build the project:
+
+2. Run docker-compose to start the required services:
+    ```sh
+    docker-compose up -d
+    ```
+
+3. Build the project:
     ```sh
     mvn clean install
     ```
-3. Run the application:
+4. Run the application:
     ```sh
     mvn spring-boot:run
     ```
-4. Testing the application:
+5. Testing the application:
     ```sh
     mvn test
     ```
@@ -85,6 +92,7 @@ to interact with the backend services.
 
 #### Verification
 
+- Verify Email: `GET /api/verification/verify`
 - Verify Email: `POST /api/verification/verify`
 
 ### Contributing
@@ -97,11 +105,8 @@ to interact with the backend services.
 6. Get your changes reviewed and merged
 7. Happy coding!
 
-### License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ### Contact
 
-For any questions or feedback, please feel free to reach out to the repository owner at [aamirshaikh3232@gmail.com].
+For any questions or feedback, please feel free to reach out to the repository owner
+at [aamirshaikh3232@gmail.com](aamirshaikh3232@gmail.com).
 
