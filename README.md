@@ -14,7 +14,8 @@ secure and efficient way to handle user interactions.
 - Permission creation
 - Permission assignment to roles
 - Role assignment to users
-- Sending notifications to the notification service using Kafka
+- Sending notifications to the notification service (e.g., email verification upon registration with a link and code)
+- Kafka integration for event-driven notifications
 - CORS configuration for frontend integration
 - RESTful API endpoints
 
