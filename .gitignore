@@ -45,3 +45,8 @@ src/test/java/com/clinicwave/clinicwaveusermanagementservice/service/impl/RoleSe
 src/test/java/com/clinicwave/clinicwaveusermanagementservice/service/impl/UserTypeServiceImplTest.java
 src/main/java/com/clinicwave/clinicwaveusermanagementservice/util/UrlUtil.java
 src/test/java/com/clinicwave/clinicwaveusermanagementservice/util/UrlUtilTest.java
+src/test/java/com/clinicwave/clinicwaveusermanagementservice/controller/VerificationCodeControllerTest.java
+src/test/java/com/clinicwave/clinicwaveusermanagementservice/controller/VerificationCodeControllerTestV2.java
+
+src/main/resources/secrets.properties
+.env
