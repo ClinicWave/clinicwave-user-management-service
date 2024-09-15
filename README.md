@@ -62,16 +62,30 @@ to interact with the backend services.
     ```sh
     docker-compose up -d
     ```
+   
+3. Create `.env` in the project root and add the following environment variables:
+   ```sh
+   DOCKER_POSTGRES_USERNAME=<your-docker-postgres-username>
+   DOCKER_POSTGRES_PASSWORD=<your-docker-postgres-password>
+   ```
+4. Create `secrets.properties` in the `src/main/resources` directory and add the following properties:
+   ```sh
+   DOCKER_POSTGRES_USERNAME=<your-docker-postgres-username>
+   DOCKER_POSTGRES_PASSWORD=<your-docker-postgres-password>
+   DB_HOST_EC2=<your-db-host-ec2>
+   PROD_POSTGRES_USERNAME=<your-production-postgres-username>
+   PROD_POSTGRES_PASSWORD=<your-production-postgres-password>
+   ```
 
-3. Build the project:
+5. Build the project:
     ```sh
     mvn clean install
     ```
-4. Run the application:
+6. Run the application:
     ```sh
     mvn spring-boot:run
     ```
-5. Testing the application:
+7. Testing the application:
     ```sh
     mvn test
     ```
