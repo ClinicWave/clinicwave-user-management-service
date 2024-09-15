@@ -112,13 +112,7 @@ to interact with the backend services.
 
 ### Contributing
 
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature`)
-3. Make changes and commit them (`git commit -am 'Add new feature'`)
-4. Push the changes to the branch (`git push origin feature`)
-5. Create a pull request
-6. Get your changes reviewed and merged
-7. Happy coding!
+We welcome contributions to this project! If you'd like to contribute, please read our [contributing guidelines](CONTRIBUTING.md) first.
 
 ### Contact
 
