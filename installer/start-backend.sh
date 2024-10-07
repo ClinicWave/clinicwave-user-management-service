@@ -7,7 +7,7 @@ cd ../ || exit
 echo "Starting the services..."
 docker compose up -d
 
-# Wait a few seconds to ensure the services is up
+# Wait a few seconds to ensure the services are up
 sleep 10
 
 # Run the Spring Boot application locally

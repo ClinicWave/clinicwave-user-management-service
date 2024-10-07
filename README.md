@@ -48,9 +48,11 @@ to interact with the backend services.
 
 - Docker
 - Java 17 or higher
-- Maven 3.6.0 or higher
+- [Mailtrap](https://mailtrap.io) account for email testing
 
 ### Steps
+
+Before proceeding, please read the [contributing guidelines](CONTRIBUTING.md).
 
 1. Clone the repository:
    ```sh
@@ -60,34 +62,24 @@ to interact with the backend services.
 
 2. Run docker-compose to start the required services:
     ```sh
-    docker-compose up -d
+    docker compose up -d
     ```
-   
-3. Create `.env` in the project root and add the following environment variables:
-   ```sh
-   DOCKER_POSTGRES_USERNAME=<your-docker-postgres-username>
-   DOCKER_POSTGRES_PASSWORD=<your-docker-postgres-password>
-   ```
-4. Create `secrets.properties` in the `src/main/resources` directory and add the following properties:
-   ```sh
-   DOCKER_POSTGRES_USERNAME=<your-docker-postgres-username>
-   DOCKER_POSTGRES_PASSWORD=<your-docker-postgres-password>
-   DB_HOST_EC2=<your-db-host-ec2>
-   PROD_POSTGRES_USERNAME=<your-production-postgres-username>
-   PROD_POSTGRES_PASSWORD=<your-production-postgres-password>
-   ```
 
-5. Build the project:
+3. Build the project:
     ```sh
-    mvn clean install
+    ./mvnw clean install
     ```
-6. Run the application:
+
+4. Run the application:
     ```sh
-    mvn spring-boot:run
+    ./mvnw spring-boot:run -Dspring-boot.run.profiles=docker
     ```
-7. Testing the application:
+
+Alternatively, you can use the provided `start-backend.sh` script to start the backend:
+
+- Run the script to start the backend:
     ```sh
-    mvn test
+    ./installer/start-backend.sh
     ```
 
 ### API Endpoints
@@ -112,7 +104,8 @@ to interact with the backend services.
 
 ### Contributing
 
-We welcome contributions to this project! If you'd like to contribute, please read our [contributing guidelines](CONTRIBUTING.md) first.
+We welcome contributions to this project! If you'd like to contribute, please read
+our [contributing guidelines](CONTRIBUTING.md).
 
 ### Contact
 
