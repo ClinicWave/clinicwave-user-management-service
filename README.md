@@ -75,12 +75,58 @@ Before proceeding, please read the [contributing guidelines](CONTRIBUTING.md).
     ./mvnw spring-boot:run -Dspring-boot.run.profiles=docker
     ```
 
-Alternatively, you can use the provided `start-backend.sh` script to start the backend:
+5. Alternatively, you can use the provided `start-backend.sh` script to start the backend:
+
+6. Ensure the `start-backend.sh` script has execute permissions. If not, grant execute permissions:
+    ```sh
+    cd installer
+    chmod +x start-backend.sh
+    ```
 
 - Run the script to start the backend:
     ```sh
-    ./installer/start-backend.sh
+    cd installer
+    ./start-backend.sh
     ```
+
+## Stopping the service
+
+To stop the backend service, you have multiple options:
+
+1. Stop Through the User Interface:
+
+    - If your application has a user interface with a stop button, you can simply click the stop button to gracefully
+      terminate the backend service.
+
+2. Using Docker Compose:
+
+    - Navigate to the service directory and run the following command to stop the services started by Docker Compose:
+
+        ```sh
+        cd clinicwave-user-management-service
+        docker compose down
+        ```
+
+    - This command stops and removes the containers created by `docker compose up -d`.
+
+3. Using the Provided Script:
+
+    - You can stop the backend using the provided `stop-backend.sh` script.
+
+    - Ensure the `stop-backend.sh` script has execute permissions. If not, grant execute permissions:
+        ```sh
+        cd installer
+        chmod +x stop-backend.sh
+        ```
+
+    - Run the script to stop the backend:
+
+       ```sh
+       cd installer
+       ./stop-backend.sh
+        ```
+
+    - This script will terminate the Spring Boot application and stop any related services as defined in the script.
 
 ### API Endpoints
 
