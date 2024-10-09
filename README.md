@@ -77,17 +77,17 @@ Before proceeding, please read the [contributing guidelines](CONTRIBUTING.md).
 
 5. Alternatively, you can use the provided `start-backend.sh` script to start the backend
 
-6. Ensure the `start-backend.sh` script has execute permissions. If not, grant execute permissions:
-    ```sh
-    cd installer
-    chmod +x start-backend.sh
-    ```
+    - Ensure the `start-backend.sh` script has execute permissions. If not, grant execute permissions:
+        ```sh
+        cd installer
+        chmod +x start-backend.sh
+        ```
 
-7. Run the script to start the backend:
-    ```sh
-    cd installer
-    ./start-backend.sh
-    ```
+    - Run the script to start the backend:
+        ```sh
+        cd installer
+        ./start-backend.sh
+        ```
 
 ## Stopping the service
 
