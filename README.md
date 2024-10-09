@@ -75,7 +75,7 @@ Before proceeding, please read the [contributing guidelines](CONTRIBUTING.md).
     ./mvnw spring-boot:run -Dspring-boot.run.profiles=docker
     ```
 
-5. Alternatively, you can use the provided `start-backend.sh` script to start the backend:
+5. Alternatively, you can use the provided `start-backend.sh` script to start the backend
 
 6. Ensure the `start-backend.sh` script has execute permissions. If not, grant execute permissions:
     ```sh
@@ -83,7 +83,7 @@ Before proceeding, please read the [contributing guidelines](CONTRIBUTING.md).
     chmod +x start-backend.sh
     ```
 
-- Run the script to start the backend:
+7. Run the script to start the backend:
     ```sh
     cd installer
     ./start-backend.sh
