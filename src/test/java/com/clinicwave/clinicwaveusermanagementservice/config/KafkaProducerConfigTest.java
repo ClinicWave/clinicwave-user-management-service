@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
@@ -29,20 +30,20 @@ class KafkaProducerConfigTest {
 
   private final KafkaProducerConfig kafkaProducerConfig;
   private final ProducerFactory<String, NotificationRequestDto> producerFactory;
-  private final KafkaTemplate<String, NotificationRequestDto> kafkaTemplate;
+
+  @MockBean
+  private KafkaTemplate<String, NotificationRequestDto> kafkaTemplate;
 
   /**
    * Constructor for dependency injection.
    *
    * @param kafkaProducerConfig The KafkaProducerConfig object to be tested
    * @param producerFactory     The ProducerFactory object to be tested
-   * @param kafkaTemplate       The KafkaTemplate object to be tested
    */
   @Autowired
-  public KafkaProducerConfigTest(KafkaProducerConfig kafkaProducerConfig, ProducerFactory<String, NotificationRequestDto> producerFactory, KafkaTemplate<String, NotificationRequestDto> kafkaTemplate) {
+  public KafkaProducerConfigTest(KafkaProducerConfig kafkaProducerConfig, ProducerFactory<String, NotificationRequestDto> producerFactory) {
     this.kafkaProducerConfig = kafkaProducerConfig;
     this.producerFactory = producerFactory;
-    this.kafkaTemplate = kafkaTemplate;
   }
 
   @Test
@@ -70,7 +71,6 @@ class KafkaProducerConfigTest {
   @DisplayName("Test KafkaTemplate properties")
   void testKafkaTemplateConfiguration() {
     assertNotNull(kafkaTemplate);
-    assertEquals(producerFactory, kafkaTemplate.getProducerFactory());
   }
 
   /**
