@@ -41,6 +41,7 @@ class UserTypeTest {
    */
   @BeforeEach
   void setUp() {
+    userTypeRepository.deleteAll();
     userType = new UserType();
     userType.setType(UserTypeEnum.USER_TYPE_DEFAULT);
   }
