@@ -10,7 +10,7 @@ import com.clinicwave.clinicwaveusermanagementservice.repository.ClinicWaveUserR
 import com.clinicwave.clinicwaveusermanagementservice.repository.RoleRepository;
 import com.clinicwave.clinicwaveusermanagementservice.service.ClinicWaveUserRoleAssignment;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,21 +24,10 @@ import java.util.Objects;
  * @author aamir on 6/30/24
  */
 @Service
+@AllArgsConstructor
 public class ClinicWaveUserRoleAssignmentImpl implements ClinicWaveUserRoleAssignment {
   private final ClinicWaveUserRepository clinicWaveUserRepository;
   private final RoleRepository roleRepository;
-
-  /**
-   * Constructor for the ClinicWaveUserRoleAssignmentImpl class.
-   *
-   * @param clinicWaveUserRepository the ClinicWaveUserRepository to be used for database operations
-   * @param roleRepository           the RoleRepository to be used for database operations
-   */
-  @Autowired
-  public ClinicWaveUserRoleAssignmentImpl(ClinicWaveUserRepository clinicWaveUserRepository, RoleRepository roleRepository) {
-    this.clinicWaveUserRepository = clinicWaveUserRepository;
-    this.roleRepository = roleRepository;
-  }
 
   /**
    * Assigns a role to a ClinicWaveUser entity.

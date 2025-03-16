@@ -7,9 +7,9 @@ import com.clinicwave.clinicwaveusermanagementservice.exception.DuplicateRoleAss
 import com.clinicwave.clinicwaveusermanagementservice.exception.ResourceNotFoundException;
 import com.clinicwave.clinicwaveusermanagementservice.exception.RoleMismatchException;
 import com.clinicwave.clinicwaveusermanagementservice.service.ClinicWaveUserRoleAssignment;
+import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -32,21 +32,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
+@AllArgsConstructor
 class ClinicWaveUserRoleAssignmentControllerTest {
   private final MockMvc mockMvc;
 
   @MockBean
   private ClinicWaveUserRoleAssignment clinicWaveUserRoleAssignment;
-
-  /**
-   * Constructs a new ClinicWaveUserRoleAssignmentControllerTest with the given MockMvc and ObjectMapper.
-   *
-   * @param mockMvc the MockMvc instance to use for testing
-   */
-  @Autowired
-  public ClinicWaveUserRoleAssignmentControllerTest(MockMvc mockMvc) {
-    this.mockMvc = mockMvc;
-  }
 
   @Test
   @DisplayName("POST /api/users/{userId}/roles/{roleId}")

@@ -4,10 +4,10 @@ import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;
 import com.clinicwave.clinicwaveusermanagementservice.service.ClinicWaveUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author aamir on 6/13/24
  */
 @SpringBootTest
+@AllArgsConstructor
 @AutoConfigureMockMvc
 class ClinicWaveUserControllerTest {
   private final MockMvc mockMvc;
@@ -45,18 +46,6 @@ class ClinicWaveUserControllerTest {
   private ClinicWaveUserService clinicWaveUserService;
 
   private ClinicWaveUserDto createdClinicWaveUserDto;
-
-  /**
-   * Constructs a new ClinicWaveUserControllerTest with the given MockMvc and ObjectMapper.
-   *
-   * @param mockMvc      the MockMvc instance to use for testing
-   * @param objectMapper the ObjectMapper instance to use for JSON serialization and deserialization
-   */
-  @Autowired
-  public ClinicWaveUserControllerTest(MockMvc mockMvc, ObjectMapper objectMapper) {
-    this.mockMvc = mockMvc;
-    this.objectMapper = objectMapper;
-  }
 
   /**
    * Sets up the test environment by creating a new ClinicWaveUserDto instance.

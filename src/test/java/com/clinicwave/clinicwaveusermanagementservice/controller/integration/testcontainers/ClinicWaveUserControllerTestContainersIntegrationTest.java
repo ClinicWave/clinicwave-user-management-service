@@ -5,10 +5,10 @@ import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserDto;
 import com.clinicwave.clinicwaveusermanagementservice.dto.NotificationRequestDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;
 import com.clinicwave.clinicwaveusermanagementservice.repository.ClinicWaveUserRepository;
+import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Import;
@@ -51,6 +51,7 @@ import static org.mockito.Mockito.verify;
 @ActiveProfiles("docker")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(KafkaTemplateMockConfig.class)
+@AllArgsConstructor
 @Testcontainers
 class ClinicWaveUserControllerTestContainersIntegrationTest {
   // Define a PostgreSQL container for the test
@@ -80,19 +81,6 @@ class ClinicWaveUserControllerTestContainersIntegrationTest {
     registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
     registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
     registry.add("spring.kafka.bootstrap-servers", kafkaContainer::getBootstrapServers);
-  }
-
-  /**
-   * Constructs a new ClinicWaveUserControllerTestContainersIntegrationTest with the given TestRestTemplate and ClinicWaveUserRepository.
-   *
-   * @param restTemplate             the TestRestTemplate instance to use for testing
-   * @param clinicWaveUserRepository the ClinicWaveUserRepository instance to use for testing
-   */
-  @Autowired
-  public ClinicWaveUserControllerTestContainersIntegrationTest(TestRestTemplate restTemplate, ClinicWaveUserRepository clinicWaveUserRepository, KafkaTemplate<String, NotificationRequestDto> kafkaTemplate) {
-    this.restTemplate = restTemplate;
-    this.clinicWaveUserRepository = clinicWaveUserRepository;
-    this.kafkaTemplate = kafkaTemplate;
   }
 
   /**

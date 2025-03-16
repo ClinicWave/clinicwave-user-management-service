@@ -5,10 +5,10 @@ import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserDto;
 import com.clinicwave.clinicwaveusermanagementservice.dto.NotificationRequestDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;
 import com.clinicwave.clinicwaveusermanagementservice.repository.ClinicWaveUserRepository;
+import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -26,7 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
 
 /**
  * This class provides integration tests for the ClinicWaveUserController class.
@@ -40,6 +41,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(KafkaTemplateMockConfig.class)
 @AutoConfigureTestDatabase
+@AllArgsConstructor
 class ClinicWaveUserControllerIntegrationTest {
   private final TestRestTemplate restTemplate;
 
@@ -49,20 +51,6 @@ class ClinicWaveUserControllerIntegrationTest {
 
   private ClinicWaveUserDto createdClinicWaveUserDto;
   private ClinicWaveUserDto createdClinicWaveUserDto2;
-
-  /**
-   * Constructs a new ClinicWaveUserControllerIntegrationTest with the given TestRestTemplate and ClinicWaveUserRepository.
-   *
-   * @param restTemplate             the TestRestTemplate instance to use for testing
-   * @param clinicWaveUserRepository the ClinicWaveUserRepository instance to use for testing
-   * @param kafkaTemplate            the KafkaTemplate instance to use for testing
-   */
-  @Autowired
-  public ClinicWaveUserControllerIntegrationTest(TestRestTemplate restTemplate, ClinicWaveUserRepository clinicWaveUserRepository, KafkaTemplate<String, NotificationRequestDto> kafkaTemplate) {
-    this.restTemplate = restTemplate;
-    this.clinicWaveUserRepository = clinicWaveUserRepository;
-    this.kafkaTemplate = kafkaTemplate;
-  }
 
   /**
    * Sets up the test environment before each test.

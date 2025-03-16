@@ -2,7 +2,7 @@ package com.clinicwave.clinicwaveusermanagementservice.controller;
 
 import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserRoleAssignmentDto;
 import com.clinicwave.clinicwaveusermanagementservice.service.ClinicWaveUserRoleAssignment;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,18 +14,9 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping(value = "/api/users", produces = "application/json")
+@AllArgsConstructor
 public class ClinicWaveUserRoleAssignmentController {
   private final ClinicWaveUserRoleAssignment clinicWaveUserRoleAssignment;
-
-  /**
-   * Constructor for the ClinicWaveUserRoleAssignmentController class.
-   *
-   * @param clinicWaveUserRoleAssignment the ClinicWaveUserRoleAssignment to be used for handling business logic
-   */
-  @Autowired
-  public ClinicWaveUserRoleAssignmentController(ClinicWaveUserRoleAssignment clinicWaveUserRoleAssignment) {
-    this.clinicWaveUserRoleAssignment = clinicWaveUserRoleAssignment;
-  }
 
   /**
    * Provisions a role for a user.

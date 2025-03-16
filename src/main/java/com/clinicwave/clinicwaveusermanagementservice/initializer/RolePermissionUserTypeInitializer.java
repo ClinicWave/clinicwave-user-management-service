@@ -12,8 +12,8 @@ import com.clinicwave.clinicwaveusermanagementservice.repository.PermissionRepos
 import com.clinicwave.clinicwaveusermanagementservice.repository.RoleRepository;
 import com.clinicwave.clinicwaveusermanagementservice.repository.UserTypeRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
  * @author aamir on 6/30/24
  */
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class RolePermissionUserTypeInitializer implements CommandLineRunner {
   private static final String PERMISSION = "Permission";
@@ -38,20 +39,6 @@ public class RolePermissionUserTypeInitializer implements CommandLineRunner {
   private final RoleRepository roleRepository;
   private final UserTypeRepository userTypeRepository;
   private final PermissionRepository permissionRepository;
-
-  /**
-   * Constructor for the DatabaseInitializer class.
-   *
-   * @param roleRepository       the RoleRepository to be used for database operations
-   * @param userTypeRepository   the UserTypeRepository to be used for database operations
-   * @param permissionRepository the PermissionRepository to be used for database operations
-   */
-  @Autowired
-  public RolePermissionUserTypeInitializer(RoleRepository roleRepository, UserTypeRepository userTypeRepository, PermissionRepository permissionRepository) {
-    this.roleRepository = roleRepository;
-    this.userTypeRepository = userTypeRepository;
-    this.permissionRepository = permissionRepository;
-  }
 
   /**
    * This method initializes the database with default values.

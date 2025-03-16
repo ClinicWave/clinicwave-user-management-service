@@ -3,10 +3,10 @@ package com.clinicwave.clinicwaveusermanagementservice.mapper;
 import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
 import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;
+import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
@@ -20,21 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author aamir on 6/19/24
  */
 @SpringBootTest
+@AllArgsConstructor
 class ClinicWaveUserMapperTest {
   private final ClinicWaveUserMapper clinicWaveUserMapper;
 
   private ClinicWaveUser clinicWaveUser;
   private ClinicWaveUserDto clinicWaveUserDto;
-
-  /**
-   * Constructor for the test class, initializes the mapper.
-   *
-   * @param clinicWaveUserMapper the mapper to be tested
-   */
-  @Autowired
-  public ClinicWaveUserMapperTest(ClinicWaveUserMapper clinicWaveUserMapper) {
-    this.clinicWaveUserMapper = clinicWaveUserMapper;
-  }
 
   /**
    * Sets up the test data before each test.

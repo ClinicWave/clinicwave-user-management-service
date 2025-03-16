@@ -1,11 +1,11 @@
 package com.clinicwave.clinicwaveusermanagementservice.config;
 
 import com.clinicwave.clinicwaveusermanagementservice.dto.NotificationRequestDto;
+import lombok.AllArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author aamir on 8/25/24
  */
 @SpringBootTest
+@AllArgsConstructor
 class KafkaProducerConfigTest {
   @Value("${spring.kafka.bootstrap-servers}")
   private String bootstrapServers;
@@ -33,18 +34,6 @@ class KafkaProducerConfigTest {
 
   @MockBean
   private KafkaTemplate<String, NotificationRequestDto> kafkaTemplate;
-
-  /**
-   * Constructor for dependency injection.
-   *
-   * @param kafkaProducerConfig The KafkaProducerConfig object to be tested
-   * @param producerFactory     The ProducerFactory object to be tested
-   */
-  @Autowired
-  public KafkaProducerConfigTest(KafkaProducerConfig kafkaProducerConfig, ProducerFactory<String, NotificationRequestDto> producerFactory) {
-    this.kafkaProducerConfig = kafkaProducerConfig;
-    this.producerFactory = producerFactory;
-  }
 
   @Test
   @DisplayName("Test KafkaProducerConfig bean")

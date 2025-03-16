@@ -2,8 +2,8 @@ package com.clinicwave.clinicwaveusermanagementservice.client.impl;
 
 import com.clinicwave.clinicwaveusermanagementservice.client.NotificationServiceClient;
 import com.clinicwave.clinicwaveusermanagementservice.dto.NotificationRequestDto;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -15,19 +15,10 @@ import org.springframework.web.client.RestTemplate;
  * @author aamir on 7/14/24
  */
 @Service
+@AllArgsConstructor
 @Slf4j
 public class NotificationServiceClientImpl implements NotificationServiceClient {
   private final RestTemplate restTemplate;
-
-  /**
-   * Constructor for dependency injection.
-   *
-   * @param restTemplate The RestTemplate to be used for sending HTTP requests.
-   */
-  @Autowired
-  public NotificationServiceClientImpl(RestTemplate restTemplate) {
-    this.restTemplate = restTemplate;
-  }
 
   /**
    * Sends a notification to the notification service.
