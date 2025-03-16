@@ -4,7 +4,7 @@ import com.clinicwave.clinicwaveusermanagementservice.domain.Role;
 import com.clinicwave.clinicwaveusermanagementservice.domain.RolePermission;
 import com.clinicwave.clinicwaveusermanagementservice.dto.PermissionDto;
 import com.clinicwave.clinicwaveusermanagementservice.dto.RoleDto;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -19,19 +19,9 @@ import java.util.stream.Collectors;
  * @author aamir on 6/16/24
  */
 @Component
+@AllArgsConstructor
 public class RoleMapper {
   private final PermissionMapper permissionMapper;
-
-  /**
-   * Constructor for the PermissionMapper class.
-   * It initializes the permissionMapper with the provided mapper.
-   *
-   * @param permissionMapper the PermissionMapper to be used for mapping Permission objects
-   */
-  @Autowired
-  public RoleMapper(PermissionMapper permissionMapper) {
-    this.permissionMapper = permissionMapper;
-  }
 
   /**
    * Converts a Role domain object into a RoleDto data transfer object.

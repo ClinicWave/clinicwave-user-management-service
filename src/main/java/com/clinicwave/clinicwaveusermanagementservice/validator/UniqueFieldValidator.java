@@ -4,30 +4,19 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 
 /**
  * This class implements the ConstraintValidator interface and defines the logic to validate a constraint of type UniqueField.
  * It uses the EntityManager to query the database and check if a given value is unique for a specified field in a specified domain class.
- * The class is annotated with @Autowired to allow Spring to handle the lifecycle of the EntityManager.
  *
  * @author aamir on 6/18/24
  */
+@AllArgsConstructor
 public class UniqueFieldValidator implements ConstraintValidator<UniqueField, Object> {
   private final EntityManager entityManager;
   private String fieldName;
   private Class<?> domainClass;
-
-  /**
-   * Constructor for the UniqueFieldValidator class.
-   * It initializes the entityManager with the provided EntityManager.
-   *
-   * @param entityManager the EntityManager to be used for database queries
-   */
-  @Autowired
-  public UniqueFieldValidator(EntityManager entityManager) {
-    this.entityManager = entityManager;
-  }
 
   /**
    * Initializes the validator with the constraint annotation instance.

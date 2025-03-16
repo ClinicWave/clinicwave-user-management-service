@@ -3,7 +3,7 @@ package com.clinicwave.clinicwaveusermanagementservice.controller;
 import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserDto;
 import com.clinicwave.clinicwaveusermanagementservice.service.ClinicWaveUserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,18 +19,9 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(value = "/api/users", produces = "application/json")
+@AllArgsConstructor
 public class ClinicWaveUserController {
   private final ClinicWaveUserService clinicWaveUserService;
-
-  /**
-   * Constructor for the ClinicWaveUserController class.
-   *
-   * @param clinicWaveUserService the ClinicWaveUserService to be used for handling business logic
-   */
-  @Autowired
-  public ClinicWaveUserController(ClinicWaveUserService clinicWaveUserService) {
-    this.clinicWaveUserService = clinicWaveUserService;
-  }
 
   /**
    * Retrieves a ClinicWaveUser entity by its ID and returns it as a response entity.

@@ -13,8 +13,8 @@ import com.clinicwave.clinicwaveusermanagementservice.exception.VerificationCode
 import com.clinicwave.clinicwaveusermanagementservice.repository.ClinicWaveUserRepository;
 import com.clinicwave.clinicwaveusermanagementservice.repository.VerificationCodeRepository;
 import com.clinicwave.clinicwaveusermanagementservice.service.VerificationCodeService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -29,6 +29,7 @@ import java.util.UUID;
  * @author aamir on 7/7/24
  */
 @Service
+@AllArgsConstructor
 @Slf4j
 public class VerificationCodeServiceImpl implements VerificationCodeService {
   private static final String VERIFICATION_CODE = "VerificationCode";
@@ -40,18 +41,6 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
 
   private final VerificationCodeRepository verificationCodeRepository;
   private final ClinicWaveUserRepository clinicWaveUserRepository;
-
-  /**
-   * Constructs a new VerificationCodeServiceImpl with the given VerificationCodeRepository.
-   *
-   * @param verificationCodeRepository the VerificationCodeRepository to be used for database operations
-   * @param clinicWaveUserRepository   the ClinicWaveUserRepository to be used for database operations
-   */
-  @Autowired
-  public VerificationCodeServiceImpl(VerificationCodeRepository verificationCodeRepository, ClinicWaveUserRepository clinicWaveUserRepository) {
-    this.verificationCodeRepository = verificationCodeRepository;
-    this.clinicWaveUserRepository = clinicWaveUserRepository;
-  }
 
   /**
    * Generates a verification code for the specified user and verification code type.

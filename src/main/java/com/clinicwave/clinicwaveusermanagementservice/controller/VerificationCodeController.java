@@ -4,8 +4,8 @@ import com.clinicwave.clinicwaveusermanagementservice.dto.VerificationRequestDto
 import com.clinicwave.clinicwaveusermanagementservice.dto.VerificationStatusDto;
 import com.clinicwave.clinicwaveusermanagementservice.service.VerificationCodeService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,19 +18,10 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/verification")
+@AllArgsConstructor
 @Slf4j
 public class VerificationCodeController {
   private final VerificationCodeService verificationCodeService;
-
-  /**
-   * Constructs a new VerificationCodeController with the given VerificationCodeService.
-   *
-   * @param verificationCodeService the VerificationCodeService to be used for verification code operations
-   */
-  @Autowired
-  public VerificationCodeController(VerificationCodeService verificationCodeService) {
-    this.verificationCodeService = verificationCodeService;
-  }
 
   /**
    * Checks the verification status for the specified token.

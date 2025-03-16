@@ -16,8 +16,8 @@ import com.clinicwave.clinicwaveusermanagementservice.service.ClinicWaveUserServ
 import com.clinicwave.clinicwaveusermanagementservice.service.VerificationCodeService;
 import com.clinicwave.clinicwaveusermanagementservice.util.NotificationUtil;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -34,6 +34,7 @@ import java.util.Map;
  * @author aamir on 6/13/24
  */
 @Service
+@AllArgsConstructor
 @Slf4j
 public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
   private final ClinicWaveUserRepository clinicWaveUserRepository;
@@ -46,26 +47,6 @@ public class ClinicWaveUserServiceImpl implements ClinicWaveUserService {
   @Value("${clinicwave-user-management-frontend-base-url}")
   private String clinicwaveUserManagementFrontendBaseUrl;
   private static final String TOPIC_NAME = "notification-topic";
-
-  /**
-   * Constructor for the ClinicWaveUserServiceImpl class.
-   *
-   * @param clinicWaveUserRepository the ClinicWaveUserRepository to be used for database operations
-   * @param roleRepository           the RoleRepository to be used for database operations
-   * @param userTypeRepository       the UserTypeRepository to be used for database operations
-   * @param clinicWaveUserMapper     the ClinicWaveUserMapper to be used for object mapping
-   * @param verificationCodeService  the VerificationCodeService to be used for generating verification codes
-   * @param kafkaTemplate            the KafkaTemplate to be used for sending notifications
-   */
-  @Autowired
-  public ClinicWaveUserServiceImpl(ClinicWaveUserRepository clinicWaveUserRepository, RoleRepository roleRepository, UserTypeRepository userTypeRepository, ClinicWaveUserMapper clinicWaveUserMapper, VerificationCodeService verificationCodeService, KafkaTemplate<String, NotificationRequestDto> kafkaTemplate) {
-    this.clinicWaveUserRepository = clinicWaveUserRepository;
-    this.roleRepository = roleRepository;
-    this.userTypeRepository = userTypeRepository;
-    this.clinicWaveUserMapper = clinicWaveUserMapper;
-    this.verificationCodeService = verificationCodeService;
-    this.kafkaTemplate = kafkaTemplate;
-  }
 
   /**
    * Retrieves a ClinicWaveUser entity by its ID and converts it into a ClinicWaveUserDto data transfer object.

@@ -8,10 +8,10 @@ import com.clinicwave.clinicwaveusermanagementservice.exception.VerificationCode
 import com.clinicwave.clinicwaveusermanagementservice.exception.VerificationCodeExpiredException;
 import com.clinicwave.clinicwaveusermanagementservice.service.VerificationCodeService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
+@AllArgsConstructor
 class VerificationCodeControllerTest {
   private final MockMvc mockMvc;
 
@@ -46,18 +47,6 @@ class VerificationCodeControllerTest {
   private static final String URL_TEMPLATE = "/api/verification/verify";
   public static final String EMAIL = "test@example.com";
   private static final String TOKEN = "91cd894d-7c2b-41d8-92cf-7ecb17b931ea";
-
-  /**
-   * Constructs a new VerificationCodeControllerTest with the given MockMvc and ObjectMapper.
-   *
-   * @param mockMvc      the MockMvc instance to use for testing
-   * @param objectMapper the ObjectMapper instance to use for JSON serialization and deserialization
-   */
-  @Autowired
-  public VerificationCodeControllerTest(MockMvc mockMvc, ObjectMapper objectMapper) {
-    this.mockMvc = mockMvc;
-    this.objectMapper = objectMapper;
-  }
 
   /**
    * Sets up the test environment before each test.
