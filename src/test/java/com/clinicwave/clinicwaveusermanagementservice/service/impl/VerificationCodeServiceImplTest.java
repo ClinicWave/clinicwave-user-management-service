@@ -1,7 +1,7 @@
 package com.clinicwave.clinicwaveusermanagementservice.service.impl;
 
-import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
-import com.clinicwave.clinicwaveusermanagementservice.domain.VerificationCode;
+import com.clinicwave.clinicwaveusermanagementservice.entity.ClinicWaveUser;
+import com.clinicwave.clinicwaveusermanagementservice.entity.VerificationCode;
 import com.clinicwave.clinicwaveusermanagementservice.dto.VerificationRequestDto;
 import com.clinicwave.clinicwaveusermanagementservice.dto.VerificationStatusDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;

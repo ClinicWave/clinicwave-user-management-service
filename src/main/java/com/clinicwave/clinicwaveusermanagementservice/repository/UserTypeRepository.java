@@ -1,6 +1,6 @@
 package com.clinicwave.clinicwaveusermanagementservice.repository;
 
-import com.clinicwave.clinicwaveusermanagementservice.domain.UserType;
+import com.clinicwave.clinicwaveusermanagementservice.entity.UserType;
 import com.clinicwave.clinicwaveusermanagementservice.enums.UserTypeEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 

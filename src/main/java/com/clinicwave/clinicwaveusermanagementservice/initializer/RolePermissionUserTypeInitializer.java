@@ -1,9 +1,9 @@
 package com.clinicwave.clinicwaveusermanagementservice.initializer;
 
-import com.clinicwave.clinicwaveusermanagementservice.domain.Permission;
-import com.clinicwave.clinicwaveusermanagementservice.domain.Role;
-import com.clinicwave.clinicwaveusermanagementservice.domain.RolePermission;
-import com.clinicwave.clinicwaveusermanagementservice.domain.UserType;
+import com.clinicwave.clinicwaveusermanagementservice.entity.Permission;
+import com.clinicwave.clinicwaveusermanagementservice.entity.Role;
+import com.clinicwave.clinicwaveusermanagementservice.entity.RolePermission;
+import com.clinicwave.clinicwaveusermanagementservice.entity.UserType;
 import com.clinicwave.clinicwaveusermanagementservice.enums.PermissionNameEnum;
 import com.clinicwave.clinicwaveusermanagementservice.enums.RoleNameEnum;
 import com.clinicwave.clinicwaveusermanagementservice.enums.UserTypeEnum;

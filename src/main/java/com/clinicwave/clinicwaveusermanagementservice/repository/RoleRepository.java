@@ -1,6 +1,6 @@
 package com.clinicwave.clinicwaveusermanagementservice.repository;
 
-import com.clinicwave.clinicwaveusermanagementservice.domain.Role;
+import com.clinicwave.clinicwaveusermanagementservice.entity.Role;
 import com.clinicwave.clinicwaveusermanagementservice.enums.RoleNameEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 

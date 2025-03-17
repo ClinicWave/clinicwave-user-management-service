@@ -1,6 +1,6 @@
 package com.clinicwave.clinicwaveusermanagementservice.mapper;
 
-import com.clinicwave.clinicwaveusermanagementservice.domain.UserType;
+import com.clinicwave.clinicwaveusermanagementservice.entity.UserType;
 import com.clinicwave.clinicwaveusermanagementservice.dto.UserTypeDto;
 import org.springframework.stereotype.Component;
 

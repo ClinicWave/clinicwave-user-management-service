@@ -1,7 +1,7 @@
 package com.clinicwave.clinicwaveusermanagementservice.service.impl;
 
-import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
-import com.clinicwave.clinicwaveusermanagementservice.domain.Role;
+import com.clinicwave.clinicwaveusermanagementservice.entity.ClinicWaveUser;
+import com.clinicwave.clinicwaveusermanagementservice.entity.Role;
 import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserRoleAssignmentDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;
 import com.clinicwave.clinicwaveusermanagementservice.enums.RoleNameEnum;

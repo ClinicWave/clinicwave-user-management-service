@@ -1,4 +1,4 @@
-package com.clinicwave.clinicwaveusermanagementservice.domain;
+package com.clinicwave.clinicwaveusermanagementservice.entity;
 
 import com.clinicwave.clinicwaveusermanagementservice.audit.Audit;
 import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;

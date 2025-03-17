@@ -1,6 +1,6 @@
 package com.clinicwave.clinicwaveusermanagementservice.mapper;
 
-import com.clinicwave.clinicwaveusermanagementservice.domain.Permission;
+import com.clinicwave.clinicwaveusermanagementservice.entity.Permission;
 import com.clinicwave.clinicwaveusermanagementservice.dto.PermissionDto;
 import org.springframework.stereotype.Component;
 

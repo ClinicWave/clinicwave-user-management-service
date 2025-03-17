@@ -1,7 +1,7 @@
 package com.clinicwave.clinicwaveusermanagementservice.mapper;
 
-import com.clinicwave.clinicwaveusermanagementservice.domain.Role;
-import com.clinicwave.clinicwaveusermanagementservice.domain.RolePermission;
+import com.clinicwave.clinicwaveusermanagementservice.entity.Role;
+import com.clinicwave.clinicwaveusermanagementservice.entity.RolePermission;
 import com.clinicwave.clinicwaveusermanagementservice.dto.PermissionDto;
 import com.clinicwave.clinicwaveusermanagementservice.dto.RoleDto;
 import org.springframework.beans.factory.annotation.Autowired;

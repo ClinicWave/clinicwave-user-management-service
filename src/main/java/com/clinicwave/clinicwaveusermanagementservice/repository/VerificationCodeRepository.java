@@ -1,7 +1,7 @@
 package com.clinicwave.clinicwaveusermanagementservice.repository;
 
-import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
-import com.clinicwave.clinicwaveusermanagementservice.domain.VerificationCode;
+import com.clinicwave.clinicwaveusermanagementservice.entity.ClinicWaveUser;
+import com.clinicwave.clinicwaveusermanagementservice.entity.VerificationCode;
 import com.clinicwave.clinicwaveusermanagementservice.enums.VerificationCodeTypeEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 

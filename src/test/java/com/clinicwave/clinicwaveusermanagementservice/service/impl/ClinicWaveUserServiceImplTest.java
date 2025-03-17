@@ -1,9 +1,9 @@
 package com.clinicwave.clinicwaveusermanagementservice.service.impl;
 
-import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
-import com.clinicwave.clinicwaveusermanagementservice.domain.Role;
-import com.clinicwave.clinicwaveusermanagementservice.domain.UserType;
-import com.clinicwave.clinicwaveusermanagementservice.domain.VerificationCode;
+import com.clinicwave.clinicwaveusermanagementservice.entity.ClinicWaveUser;
+import com.clinicwave.clinicwaveusermanagementservice.entity.Role;
+import com.clinicwave.clinicwaveusermanagementservice.entity.UserType;
+import com.clinicwave.clinicwaveusermanagementservice.entity.VerificationCode;
 import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserDto;
 import com.clinicwave.clinicwaveusermanagementservice.dto.NotificationRequestDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.*;

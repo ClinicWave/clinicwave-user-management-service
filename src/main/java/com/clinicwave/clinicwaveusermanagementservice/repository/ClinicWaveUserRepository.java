@@ -1,6 +1,6 @@
 package com.clinicwave.clinicwaveusermanagementservice.repository;
 
-import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
+import com.clinicwave.clinicwaveusermanagementservice.entity.ClinicWaveUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

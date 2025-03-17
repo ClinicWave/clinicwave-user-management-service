@@ -1,6 +1,6 @@
 package com.clinicwave.clinicwaveusermanagementservice.repository;
 
-import com.clinicwave.clinicwaveusermanagementservice.domain.Permission;
+import com.clinicwave.clinicwaveusermanagementservice.entity.Permission;
 import com.clinicwave.clinicwaveusermanagementservice.enums.PermissionNameEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,6 +1,6 @@
 package com.clinicwave.clinicwaveusermanagementservice.mapper;
 
-import com.clinicwave.clinicwaveusermanagementservice.domain.ClinicWaveUser;
+import com.clinicwave.clinicwaveusermanagementservice.entity.ClinicWaveUser;
 import com.clinicwave.clinicwaveusermanagementservice.dto.ClinicWaveUserDto;
 import com.clinicwave.clinicwaveusermanagementservice.enums.GenderEnum;
 import org.junit.jupiter.api.BeforeEach;
